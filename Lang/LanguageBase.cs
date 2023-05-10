@@ -28,12 +28,28 @@
 
         public abstract string BOOSTER_HACK { get; }
 
-        public abstract string KICK { get; }
-
-        public abstract string BAN { get; }
-
         public abstract string CHEATER_DETECTED_MESSAGE { get;}
 
         public abstract string CHEATING_BEHAVIOR_MESSAGE { get; }
+
+        public abstract string IS_LATEST_VERSION { get; }
+
+        public abstract string CHECK_UPDATE_FAILD { get;}
+
+        public abstract string NEW_VERSION_DETECTED { get; }
+
+        public abstract string BAN_PLAYER { get; }
+
+        public abstract string KICK_PLAYER { get; }
+
+        public abstract string KICK_OR_BAN_REASON { get; }
+
+        public abstract string ONLINE_PLAYER_LISTS_LOADING { get; }
+
+        public abstract string ONLINE_PLAYER_LISTS_LOADED { get; }
+
+        public abstract string CHANGE_LOG { get; }
+
+        public abstract string BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY { get; }
     }
 }

@@ -85,7 +85,7 @@
         {
             get
             {
-                return "检测强化剂作弊，接受的值：[true|false]";
+                return "开启检测强化剂作弊，接受的值：[true|false]";
             }
         }
 
@@ -110,6 +110,38 @@
             get
             {
                 return "安全设置";
+            }
+        }
+
+        internal static string LOAD_ONLINE_PLAYER_LISTS_NAME
+        {
+            get
+            {
+                return "EnableOnlinePlayerLists";
+            }
+        }
+
+        internal static string LOAD_ONLINE_PLAYER_LISTS_DESC
+        {
+            get
+            {
+                return "启用在线玩家黑白名单，接受的值：[true|false]";
+            }
+        }
+
+        internal static string ENABLE_BROADCAST_NAME
+        {
+            get
+            {
+                return "EnableBroadcast";
+            }
+        }
+
+        internal static string ENABLE_BROADCAST_DESC
+        {
+            get
+            {
+                return "启用作弊玩家消息通报，接受的值：[true|false]";
             }
         }
     }

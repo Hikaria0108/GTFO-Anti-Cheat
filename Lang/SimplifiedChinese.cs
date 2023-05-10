@@ -32,7 +32,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "开始检查更新...";
+                return "<color=orange>[GTFO Anti-Cheat]</color> 开始检查更新...";
             }
         }
 
@@ -96,7 +96,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<color=orange>本房间已启用 GTFO Anti-Cheat</color>";
+                return "<color=orange>[GTFO Anti-Cheat] 本房间已启用反作弊</color>";
             }
         }
 
@@ -105,22 +105,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
             get
             {
                 return "修改强化剂";
-            }
-        }
-
-        public override string BAN
-        {
-            get
-            {
-                return "踢出并封禁";
-            }
-        }
-
-        public override string KICK
-        {
-            get
-            {
-                return "踢出";
             }
         }
 
@@ -137,6 +121,86 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
             get
             {
                 return "<#F80>[GTFO Auti-Cheat] 作弊行为: {0}";
+            }
+        }
+
+        public override string CHECK_UPDATE_FAILD
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <#F00>检查更新失败！";
+            }
+        }
+
+        public override string IS_LATEST_VERSION
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <#0F0>当前版本已是最新版本 v{0}";
+            }
+        }
+
+        public override string NEW_VERSION_DETECTED
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <#0F0>检测到新版本 v{0}";
+            }
+        }
+
+        public override string ONLINE_PLAYER_LISTS_LOADING
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <#FFF>正在加载在线玩家黑白名单...";
+            }
+        }
+
+        public override string ONLINE_PLAYER_LISTS_LOADED
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <#0F0>在线玩家黑白名单已加载";
+            }
+        }
+
+        public override string KICK_PLAYER
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] 作弊玩家 {0} 被 踢出";
+            }
+        }
+
+        public override string BAN_PLAYER
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] 作弊玩家 {0} 被 踢出并封禁";
+            }
+        }
+
+        public override string KICK_OR_BAN_REASON
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] 原因: {0}";
+            }
+        }
+
+        public override string CHANGE_LOG
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] 更新日志:";
+            }
+        }
+
+        public override string BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] 被封禁玩家 {0}[{1}] 被拒绝加入大厅";
             }
         }
     }

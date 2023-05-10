@@ -10,25 +10,31 @@ namespace Hikaria.GTFO_Anti_Cheat
     {
         static ConfigManager()
         {
-            Logs.LogDebug("正在加载配置文件...");
+            Logs.LogDebug("Loading config...");
             ConfigFile configFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "Hikaria.GTFO_Anti-Cheat.cfg"), true);
             ConfigManager.language = configFile.Bind<string>(ConfigDescription.COMMON_SETTINGS, ConfigDescription.LANGUAGE_NAME, "zh-cn", ConfigDescription.LANGUAGE_DESC);
             ConfigManager.disableEnvironmentDetect = configFile.Bind<bool>(ConfigDescription.SAFE_SETTINGS, ConfigDescription.DISABLE_ENVIRONMENT_DETECT_NAME, false, ConfigDescription.DISABLE_ENVIRONMENT_DETECT_DESC);
             ConfigManager.detectBoosterHack = configFile.Bind<bool>(ConfigDescription.DETECT_SETTINGS, ConfigDescription.DETECT_BOOSTER_HACK_NAME, true, ConfigDescription.DETECT_BOOSTER_HACK_DESC);
             ConfigManager.autoKickPlayer = configFile.Bind<bool>(ConfigDescription.PLAYER_SETTINGS, ConfigDescription.AUTO_KICK_CHEATER_NAME, false, ConfigDescription.AUTO_KICK_CHEATER_DESC);
             ConfigManager.autoBanPlayer = configFile.Bind<bool>(ConfigDescription.PLAYER_SETTINGS, ConfigDescription.AUTO_BAN_CHEATER_NAME, false, ConfigDescription.AUTO_BAN_CHEATER_DESC);
-            Logs.LogDebug("配置文件加载完成");
+            ConfigManager.loadOnlinePlayerLists = configFile.Bind<bool>(ConfigDescription.PLAYER_SETTINGS, ConfigDescription.LOAD_ONLINE_PLAYER_LISTS_NAME, true, ConfigDescription.LOAD_ONLINE_PLAYER_LISTS_DESC);
+            ConfigManager.enableBroadcast = configFile.Bind<bool>(ConfigDescription.COMMON_SETTINGS, ConfigDescription.ENABLE_BROADCAST_NAME, true, ConfigDescription.ENABLE_BROADCAST_DESC);
+            Logs.LogDebug("Config loaded");
         }
 
-        public static ConfigEntry<string> language;
+        public static readonly ConfigEntry<string> language;
 
-        public static ConfigEntry<bool> disableEnvironmentDetect;
+        public static readonly ConfigEntry<bool> disableEnvironmentDetect;
 
-        public static ConfigEntry<bool> autoKickPlayer;
+        public static readonly ConfigEntry<bool> autoKickPlayer;
 
-        public static ConfigEntry<bool> autoBanPlayer;
+        public static readonly ConfigEntry<bool> autoBanPlayer;
 
-        public static ConfigEntry<bool> detectBoosterHack;
+        public static readonly ConfigEntry<bool> detectBoosterHack;
+
+        public static readonly ConfigEntry<bool> loadOnlinePlayerLists;
+
+        public static readonly ConfigEntry<bool> enableBroadcast;
 
         public LanguageBase Language
         {
@@ -75,6 +81,22 @@ namespace Hikaria.GTFO_Anti_Cheat
             get
             {
                 return disableEnvironmentDetect.Value;
+            }
+        }
+
+        public bool LoadOnlinePlayerLists
+        {
+            get
+            {
+                return loadOnlinePlayerLists.Value;
+            }
+        }
+
+        public bool EnableBroadcast
+        {
+            get
+            {
+                return enableBroadcast.Value;
             }
         }
     }

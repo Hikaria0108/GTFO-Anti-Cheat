@@ -32,6 +32,16 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             {
                 if (player == SNet.LocalPlayer)
                 {
+                    if(!EntryPoint.IsLogged)
+                    {
+                        EntryPoint.IsLogged = true;
+                        HttpHelper.CheckUpdate();
+                        if (EntryPoint.EnableOnlinePlayerLists)
+                        {
+                            LobbyManager.LoadOnlineLists();
+                        }
+                    }
+
                     if (!SNet.IsMaster)
                     {
                         GameEventLogManager.AddLog(EntryPoint.Language.NOT_HOST);
@@ -90,12 +100,23 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             }
         }
 
-        private static bool SNet_Lobby_STEAM__PlayerJoined__Prefix(SNet_Player player, CSteamID steamID)
+        private static bool SNet_Lobby_STEAM__PlayerJoined__Prefix(SNet_Player player)
         {
-            if (!SNet.IsMaster)
-                return true;
-            bool flag = LobbyManager.Current.IsPlayerBanned(player, steamID);
-            return !flag;
+            //若启用在线名单则优先匹配在线名单
+            if (EntryPoint.EnableOnlinePlayerLists)
+            {
+                CSteamID steamID = new CSteamID(player.Profile.player.lookup);
+                bool result1 = LobbyManager.Current.IsOnlineWhitelistPlayer(steamID) || !LobbyManager.Current.IsOnlineBlacklistPlayer(steamID);
+                if (!result1)
+                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY, player.NickName, player.Profile.player.lookup));
+                return result1;
+            }
+
+            //匹配本地名单
+            bool result2 = LobbyManager.Current.IsWhitelistPlayer(player) || !LobbyManager.Current.IsPlayerBanned(player);
+            if (!result2)
+                GameEventLogManager.AddLog(string.Format(EntryPoint.Language.BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY, player.NickName, player.Profile.player.lookup));
+            return result2;
         }
 
         private static void SteamMatchmaking__InviteUserToLobby__Prefix(CSteamID steamIDInvitee)

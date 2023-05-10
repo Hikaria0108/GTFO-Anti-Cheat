@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using BepInEx.Unity.IL2CPP;
+﻿using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using BepInEx;
 using Hikaria.GTFO_Anti_Cheat.Lang;
-using Player;
 using Hikaria.GTFO_Anti_Cheat.Utils;
 using Hikaria.GTFO_Anti_Cheat.Patches;
 using Patch = Hikaria.GTFO_Anti_Cheat.Utils.Patch;
@@ -25,6 +22,8 @@ namespace Hikaria.GTFO_Anti_Cheat
             EntryPoint.AutoKickPlayer = configManager.AutoKickPlayer;
             EntryPoint.DetectBoosterHack = configManager.DetectBoosterHack;
             EntryPoint.DisableEnvironmentDetect = configManager.DetectEnvironmentDetect;
+            EntryPoint.EnableOnlinePlayerLists = configManager.LoadOnlinePlayerLists;
+            EntryPoint.EnableBroadcast = configManager.EnableBroadcast;
 
             if(!EntryPoint.DisableEnvironmentDetect)
             {
@@ -66,6 +65,12 @@ namespace Hikaria.GTFO_Anti_Cheat
 
         internal static bool EnableDebugInfo;
 
+        internal static bool IsLogged;
+
+        internal static bool EnableOnlinePlayerLists;
+
+        internal static bool EnableBroadcast;
+
         private static bool DetectEnvironment()
         {
             BepInEx.PluginInfo pluginInfo;
@@ -82,14 +87,7 @@ namespace Hikaria.GTFO_Anti_Cheat
                 Logs.LogError("MTFO Detected!");
             }
 
-            if (GTFO_API_Installed || MTFO_Installed)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return GTFO_API_Installed || MTFO_Installed;
         }
 
         private static void RegisterTypesInIl2Cpp()

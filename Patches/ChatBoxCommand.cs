@@ -38,6 +38,9 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                                 case "help":
                                     PrintCommands();
                                     return;
+                                case "broadcast":
+                                    EnableBroadcast(StringToBool(array[2]));
+                                    return;
                                 case "autokick":
                                     AutoKickAndBan("autokick", StringToBool(array[2]));
                                     return;
@@ -95,6 +98,12 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             }
         }
 
+        private static void EnableBroadcast(bool enable)
+        {
+            EntryPoint.EnableBroadcast = enable;
+            GameEventLogManager.AddLog(string.Format("<#F80>[GTFO Anti-Cheat] <color={0}>作弊玩家通告消息已{1}</color>", EntryPoint.EnableBroadcast ? "green" : "red", EntryPoint.EnableBroadcast ? "启用" : "禁用"));
+        }
+
         private static void DetectBooster(string choice, bool enable)
         {
             switch (choice)
@@ -125,6 +134,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
         private static string[] commands =
         {
+            "/gac broadcast [on|off] 开启|关闭 作弊玩家信息通报",
             "/gac autokick [on|off], 开启|关闭 自动踢出作弊玩家",
             "/gac autoban [on|off], 开启|关闭 自动踢出并封禁作弊玩家",
             "/gac detect booster [on|off], 开启|关闭 强化剂作弊检测"

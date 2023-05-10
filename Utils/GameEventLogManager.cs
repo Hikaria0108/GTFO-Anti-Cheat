@@ -7,6 +7,11 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
 {
     internal class GameEventLogManager : MonoBehaviour
     {
+        private void Awake()
+        {
+            Instance = this;
+        }
+
         private void Update()
         {
             if (this._interval > 0f)
@@ -14,18 +19,18 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                 this._interval -= Time.deltaTime;
                 return;
             }
-            if (GameEventLogManager.GameEventLogs.Count > 0)
+            if (_gameEventLogs.Count > 0)
             {
-                this._puiGameEventLog.AddLogItem(GameEventLogManager.GameEventLogs[0], eGameEventChatLogType.GameEvent);
-                GuiManager.Current.m_playerLayer.m_gameEventLog.AddLogItem(GameEventLogManager.GameEventLogs[0], eGameEventChatLogType.GameEvent);
-                GameEventLogManager.GameEventLogs.RemoveAt(0);
+                this._puiGameEventLog.AddLogItem(_gameEventLogs[0], eGameEventChatLogType.GameEvent);
+                GuiManager.Current.m_playerLayer.m_gameEventLog.AddLogItem(_gameEventLogs[0], eGameEventChatLogType.GameEvent);
+                _gameEventLogs.RemoveAt(0);
                 this._interval = 1f;
             }
         }
 
         public static void AddLog(string log)
         {
-            GameEventLogManager.GameEventLogs.Add(log);
+            Instance._gameEventLogs.Add(log);
         }
 
         private void Start()
@@ -45,21 +50,33 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             return array;
         }
 
-        public static void AddLogInSeparate(string str, int len = 50)
+        public static void AddLogInSplit(string str, int len = 50)
         {
             if (str.Length > len)
             {
-                string[] array = GameEventLogManager.getstr(str, len);
+                string[] array = getstr(str, len);
                 for (int i = 0; i < array.Length; i++)
                 {
-                    GameEventLogManager.AddLog(array[i]);
+                    AddLog(array[i]);
                 }
                 return;
             }
-            GameEventLogManager.AddLog(str);
+            AddLog(str);
         }
 
-        private static List<string> GameEventLogs = new List<string>();
+        public static void AddLogInSplit(string str, char ch)
+        {
+            string[] array = str.Split(ch);
+            for (int i = 0; i < array.Length; i++)
+            {
+                AddLog(array[i]);
+            }
+            return;
+        }
+
+        public static GameEventLogManager Instance;
+
+        public List<string> _gameEventLogs = new List<string>();
 
         private float _interval;
 

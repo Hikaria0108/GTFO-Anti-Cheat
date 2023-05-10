@@ -38,11 +38,10 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     Logs.LogMessage(string.Format("{0} has invalid boosters", player.NickName));
                 }
 
-                ChatManager.Speak(string.Format(EntryPoint.Language.CHEATER_DETECTED_MESSAGE, player.NickName));
-                ChatManager.Speak(string.Format(EntryPoint.Language.CHEATING_BEHAVIOR_MESSAGE, EntryPoint.Language.BOOSTER_HACK));
-
                 if (LobbyManager.Host)
                 {
+                    ChatManager.DetectBroadcast(player.NickName, EntryPoint.Language.BOOSTER_HACK);
+
                     if (EntryPoint.AutoBanPlayer)
                     {
                         LobbyManager.Current.BanPlayer(player.PlayerSlotIndex(), EntryPoint.Language.BOOSTER_HACK);
@@ -51,6 +50,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     {
                         LobbyManager.Current.KickPlayer(player.PlayerSlotIndex(), EntryPoint.Language.BOOSTER_HACK);
                     }
+                    
                     //LobbyManager.StartKickorBanTimer(player, EntryPoint.Language.BOOSTER_HACK, player.Lookup + EntryPoint.Language.BOOSTER_HACK);
                 }  
             }
@@ -63,7 +63,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         }
 
         private const string PatchName = "DetectBoosterDataHack";
-
+        /*
         private static void StartTimer(SNet_Player player)
         {
             string threadName = player.Lookup.ToString();
@@ -129,5 +129,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
             private int _sec = 10;
         }
+        */
     }
 }

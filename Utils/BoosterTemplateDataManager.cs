@@ -18,7 +18,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             bool isValidAdvancedBooster = true;
             bool isValidSpecializedBooster = true;
 
-            //Count为0表示没有激活的强化剂
+            //Count为0表示对应槽位没有激活的强化剂
             if (boosterImplantsWithOwner.BasicImplant.BoosterEffectCount != 0)
                 isValidBasicBooster = IsValidBooster(BoosterImplantCategory.Muted, boosterImplantsWithOwner.BasicImplant.Conditions, boosterImplantsWithOwner.BasicImplant.BoosterEffectDatas);
             if (boosterImplantsWithOwner.AdvancedImplant.BoosterEffectCount != 0)
@@ -36,6 +36,9 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             if (EntryPoint.EnableDebugInfo)
             {
                 Logs.LogMessage("===================");
+                Logs.LogMessage("Booster Info:");
+                Logs.LogMessage("Category: " + category.ToString());
+
                 foreach (uint conditionId in conditions)
                 {
                     Logs.LogMessage("ConditionID:" + conditionId.ToString());
@@ -44,7 +47,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                 {
                     Logs.LogMessage("EffectID:" + data.BoosterEffectID.ToString() + ", EffectValue:" + data.EffectValue.ToString());
                 }
-                Logs.LogMessage("===================");
+                Logs.LogMessage("End of Booster Info");
             }
 
             if (EntryPoint.EnableDebugInfo)
@@ -74,19 +77,17 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                 effectCount++;
             }
 
-            //属性匹配标记和计数
-            bool[] conditionsMatch = new bool[conditionCount];
-            bool[] effectsMatch = new bool[effectCount];
-            int conditionIndex = 0;
-            int effectIndex = 0;
+            //属性匹配标记
+            //bool[] conditionsMatch = new bool[conditionCount];
+            //bool[] effectsMatch = new bool[effectCount];
 
             foreach (Booster_Template booster in booster_Templates[category])
             {
                 //每一次循环开始先重置计数和标志
-                conditionsMatch = Enumerable.Repeat(false, conditionCount).ToArray();
-                effectsMatch = Enumerable.Repeat(false, effectCount).ToArray();
-                conditionIndex = 0;
-                effectIndex = 0;
+                //conditionsMatch = Enumerable.Repeat(false, conditionCount).ToArray();
+                //effectsMatch = Enumerable.Repeat(false, effectCount).ToArray();
+                int conditionIndex = 0;
+                int effectIndex = 0;
 
                 //首先判断有效属性数目是否匹配当前Booster_Template，不匹配直接下一个Template
                 if (conditionCount != (booster.Conditions.Count + booster.RandomConditions.Count != 0 ? 1 : 0) || effectCount != (booster.Effects.Count + booster.RandomEffectsGroups.Count))
@@ -109,7 +110,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                         {
                             Logs.LogMessage(string.Format("RandomConditions:{0}", conditions[conditionIndex]));
                         }
-                        conditionsMatch[conditionIndex] = true;
+                        //conditionsMatch[conditionIndex] = true;
                         conditionIndex++;
                     }
                     else
@@ -126,7 +127,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                             {
                                 Logs.LogMessage(string.Format("Conditions[{0}]:{1}", conditionIndex, conditions[conditionIndex]));
                             }
-                            conditionsMatch[conditionIndex] = true;
+                            //conditionsMatch[conditionIndex] = true;
                             conditionIndex++;
                             continue;
                         }
@@ -149,7 +150,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                                 {
                                     Logs.LogMessage(string.Format("RandomEffectId:{0},EffectValue:{1}", effectDatas[effectIndex].BoosterEffectID, effectDatas[effectIndex].EffectValue));
                                 }
-                                effectsMatch[effectIndex] = true;
+                                //effectsMatch[effectIndex] = true;
                                 effectIndex++;
                                 goto _nextGroup;
                             }
@@ -168,7 +169,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                                 {
                                     Logs.LogMessage(string.Format("EffectId:{0},EffectValue:{1}", effectDatas[effectIndex].BoosterEffectID, effectDatas[effectIndex].EffectValue));
                                 }
-                                effectsMatch[effectIndex] = true;
+                                //effectsMatch[effectIndex] = true;
                                 effectIndex++;
                                 continue;
                             }
@@ -176,12 +177,13 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                     }
                 }
 
-                //匹配index达到count时代表完全匹配
+                //匹配index达到count时说明完全匹配
                 if (conditionIndex == conditionCount && effectIndex == effectCount)
                 {
                     if (EntryPoint.EnableDebugInfo)
                     {
                         Logs.LogMessage("Valid Booster!");
+                        Logs.LogMessage("===================");
                     }
                     return true;
                 }
@@ -189,10 +191,11 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             _nextTemplate:;
             }
 
-            //到达这里时说明没有匹配的Booster_Template, 说明是修改过的Booster
+            //到达这里时说明没有匹配的Booster_Template, 是修改过的Booster
             if (EntryPoint.EnableDebugInfo)
             {
                 Logs.LogMessage("Invalid Booster!");
+                Logs.LogMessage("===================");
             }
 
             return false;
@@ -374,6 +377,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             "{\"Deprecated\":false,\"PublicName\":\"PURE\",\"Description\":\"\",\"DurationRange\":{\"x\":2.0,\"y\":3.0},\"DropWeight\":2.0,\"Conditions\":[],\"RandomConditions\":[7,27],\"Effects\":[],\"RandomEffects\":[[{\"BoosterImplantEffect\":41,\"MinValue\":1.2,\"MaxValue\":1.25}]],\"ImplantCategory\":2,\"MainEffectType\":3,\"name\":\"Aggressive_BioscanSpeed\",\"internalEnabled\":true,\"persistentID\":48}",
             "{\"Deprecated\":false,\"PublicName\":\"SOLID\",\"Description\":\"\",\"DurationRange\":{\"x\":2.0,\"y\":3.0},\"DropWeight\":7.0,\"Conditions\":[],\"RandomConditions\":[],\"Effects\":[],\"RandomEffects\":[[{\"BoosterImplantEffect\":36,\"MinValue\":1.4,\"MaxValue\":1.53},{\"BoosterImplantEffect\":37,\"MinValue\":1.4,\"MaxValue\":1.53},{\"BoosterImplantEffect\":38,\"MinValue\":1.4,\"MaxValue\":1.53},{\"BoosterImplantEffect\":5,\"MinValue\":1.8,\"MaxValue\":2.0}],[{\"BoosterImplantEffect\":11,\"MinValue\":0.83,\"MaxValue\":0.87},{\"BoosterImplantEffect\":12,\"MinValue\":0.62,\"MaxValue\":0.71},{\"BoosterImplantEffect\":34,\"MinValue\":0.56,\"MaxValue\":0.62}]],\"ImplantCategory\":2,\"MainEffectType\":0,\"name\":\"Aggressive_InitialState\",\"internalEnabled\":true,\"persistentID\":49}",
         };
-        private static uint offset = 9999;
+        private static uint offset = 41985;
     }
 }

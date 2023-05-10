@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using BepInEx;
 using Player;
@@ -7,6 +6,7 @@ using SNetwork;
 using Steamworks;
 using UnityEngine;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Threading;
 
 namespace Hikaria.GTFO_Anti_Cheat.Utils
@@ -49,13 +49,69 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                 Logs.LogMessage(string.Format("Blacklist: {0}", id));
                 this.Blacklist.Add(item);
             }
+
+            CheckConflictInTwoLists();
         }
 
-        public bool IsPlayerBanned(SNet_Player player, CSteamID steamID)
+        //从黑名单中剔除白名单玩家
+        private void CheckConflictInTwoLists()
+        {
+            foreach (CSteamID steamID in Whitelist)
+            {
+                if (Blacklist.Contains(steamID))
+                {
+                    UnBanPlayer(steamID);
+                }
+            }
+        }
+
+        public bool IsOnlineBlacklistPlayer(CSteamID steamID)
+        {
+            return OnlineBlacklist.Contains(steamID);
+        }
+
+        public bool IsOnlineWhitelistPlayer(CSteamID steamID)
+        {
+            return OnlineWhitelist.Contains(steamID);
+        }
+
+        public bool IsWhitelistPlayer(CSteamID steamID)
         {
             bool flag = !LobbyManager.Host;
             if (!flag)
             {
+                return this.Whitelist.Contains(steamID);
+            }
+            return false;
+        }
+
+        public bool IsWhitelistPlayer(SNet_Player player)
+        {
+            bool flag = !LobbyManager.Host;
+            if (!flag)
+            {
+                CSteamID steamID = new CSteamID(player.Profile.player.lookup);
+                return this.Whitelist.Contains(steamID);
+            }
+            return false;
+        }
+
+        public bool IsPlayerBanned(CSteamID steamID)
+        {
+            bool flag = !LobbyManager.Host;
+            if (!flag)
+            {
+                return this.Blacklist.Contains(steamID);
+            }
+            return false;
+        }
+
+        public bool IsPlayerBanned(SNet_Player player)
+        {
+            bool flag = !LobbyManager.Host;
+            if (!flag)
+            {
+                CSteamID steamID = new CSteamID(player.Profile.player.lookup);
                 return this.Blacklist.Contains(steamID);
             }
             return false;
@@ -68,38 +124,105 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             {
                 SNet_Player player = SNet.Slots.PlayerSlots[slot].player;
                 CSteamID item = new CSteamID(player.Profile.player.lookup);
-                this.Blacklist.Add(item);
-                this.KickPlayer(slot);
-                ChatManager.AddQueue(string.Format("<#F80>作弊玩家 {0} 由于 {1} 被 {2}", player.NickName, reason, EntryPoint.Language.BAN));
-                Logs.LogMessage(string.Format("{0} has been banned from the lobby for {1}", player.NickName, reason));
-                List<string> list = File.ReadAllLines(this.File_Blacklist).ToList<string>();
-                list.Add(item.ToString());
-                File.WriteAllLines(this.File_Blacklist, list);
+                BlacklistPlayer(item);
+                KickPlayer(slot);
+
+                if (EntryPoint.EnableBroadcast)
+                {
+                    ChatManager.AddQueue(string.Format(EntryPoint.Language.BAN_PLAYER, player.NickName));
+                    ChatManager.AddQueue(string.Format(EntryPoint.Language.KICK_OR_BAN_REASON, reason));
+                }
             }
         }
 
-        public void UnbanPlayer(SNet_Player player, CSteamID steamID)
+        public void UnBanPlayer(SNet_Player player)
+        {
+            CSteamID steamID = new CSteamID(player.Profile.player.lookup);
+            bool flag = this.Blacklist.Remove(steamID);
+            if (flag)
+            {
+                System.Collections.Generic.List<string> list = File.ReadAllLines(this.File_Blacklist).ToList<string>();
+                list.Remove(steamID.ToString());
+                File.WriteAllLines(this.File_Blacklist, list);
+                Logs.LogMessage("Remove player " + player.NickName + " from the blacklist.");
+            }
+            else
+            {
+                Logs.LogError("Failed to remove player " + player.NickName + " from the blacklist. SteamID not found!");
+            }
+        }
+
+        public void UnBanPlayer(CSteamID steamID)
         {
             bool flag = this.Blacklist.Remove(steamID);
             if (flag)
             {
-                List<string> list = File.ReadAllLines(this.File_Blacklist).ToList<string>();
+                System.Collections.Generic.List<string> list = File.ReadAllLines(this.File_Blacklist).ToList<string>();
                 list.Remove(steamID.ToString());
                 File.WriteAllLines(this.File_Blacklist, list);
+                Logs.LogMessage("Remove steamid " + steamID.ToString() + " from the blacklist.");
+                return;
             }
             else
             {
-                Logs.LogError("Failed to remove player " + player.NickName + " from the blacklist. SteamID not found");
+                Logs.LogError("Failed to remove steamid " + steamID.ToString() + " from the blacklist. SteamID not found!");
             }
         }
 
-        public void WhitelistPlayer(CSteamID steamID)
+        public void UnWhitePlayer(CSteamID steamID)
         {
+            bool flag = this.Whitelist.Remove(steamID);
+            if (flag)
+            {
+                System.Collections.Generic.List<string> list = File.ReadAllLines(this.File_Whitelist).ToList<string>();
+                list.Remove(steamID.ToString());
+                File.WriteAllLines(this.File_Whitelist, list);
+                Logs.LogMessage("Remove steamid " + steamID.ToString() + " from the whitelist.");
+                return;
+            }
+            else
+            {
+                Logs.LogError("Failed to remove steamid " + steamID.ToString() + " from the whitelist. SteamID not found!");
+            }
+        }
+
+        public void WhitelistPlayer(CSteamID steamID, bool writeToDisk = false)
+        {
+            //检查是否是黑名单玩家，若是则移除
+            bool flag2 = IsPlayerBanned(steamID);
+            if (flag2)
+            {
+                UnBanPlayer(steamID);
+            }
+
+            //检查是否是白名单玩家，若不是则添加
             bool flag = this.Whitelist.Contains(steamID);
             if (!flag)
             {
                 this.Whitelist.Add(steamID);
-                Logs.LogMessage("Invite sent. Player added to whitelist");
+                System.Collections.Generic.List<string> list = File.ReadAllLines(this.File_Whitelist).ToList<string>();
+                list.Add(steamID.ToString());
+                File.WriteAllLines(this.File_Whitelist, list);
+            }
+        }
+
+        public void BlacklistPlayer(CSteamID steamID, bool writeToDisk = false)
+        {
+            //检查是否是白名单玩家，若是则移除
+            bool flag2 = IsWhitelistPlayer(steamID);
+            if (flag2)
+            {
+               UnWhitePlayer(steamID);
+            }
+
+            //检查是否是黑名单玩家，若不是则添加
+            bool flag = IsPlayerBanned(steamID);
+            if (!flag)
+            {
+                this.Blacklist.Add(steamID);
+                System.Collections.Generic.List<string> list = File.ReadAllLines(this.File_Blacklist).ToList<string>();
+                list.Add(steamID.ToString());
+                File.WriteAllLines(this.File_Blacklist, list);
             }
         }
 
@@ -111,7 +234,12 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                 SNet_Player player = SNet.Slots.PlayerSlots[slot].player;
                 SNet.SessionHub.KickPlayer(player, SNet_PlayerEventReason.Kick_ByVote);
                 PlayerBackpackManager.DestroyBackpack(player);
-                ChatManager.AddQueue(string.Format("<#F80>作弊玩家 {0} 由于 {1} 被 {2}", player.NickName, reason, EntryPoint.Language.KICK));
+
+                if (EntryPoint.EnableBroadcast)
+                {
+                    ChatManager.AddQueue(string.Format(EntryPoint.Language.KICK_PLAYER, player.NickName));
+                    ChatManager.AddQueue(string.Format(EntryPoint.Language.KICK_OR_BAN_REASON, reason));
+                }
                 Logs.LogMessage(string.Format("{0} has been kicked from the lobby for {1}", player.NickName, reason));
             }
         }
@@ -126,6 +254,37 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                 PlayerBackpackManager.DestroyBackpack(player);
                 Logs.LogMessage(string.Format("{0} has been kicked from the lobby", player.NickName));
             }
+        }
+
+        public static void LoadOnlineLists()
+        {
+            new Task(delegate ()
+            {
+                GameEventLogManager.AddLog(EntryPoint.Language.ONLINE_PLAYER_LISTS_LOADING);
+
+                string[] onlineWhitelist = HttpHelper.Get(PlayerWhitelistURL).Result;
+                string[] onlineBlacklist = HttpHelper.Get(PlayerBlacklistURL).Result;
+
+                LobbyManager.Current.OnlineWhitelist.Clear();
+                foreach (string steamID in onlineWhitelist)
+                {
+                    if (steamID != string.Empty)
+                    {
+                        LobbyManager.Current.OnlineWhitelist.Add(new CSteamID(Convert.ToUInt64(steamID)));
+                    }
+                }
+
+                LobbyManager.Current.OnlineBlacklist.Clear();
+                foreach (string steamID in onlineBlacklist)
+                {
+                    if (steamID != string.Empty)
+                    {
+                        LobbyManager.Current.OnlineBlacklist.Add(new CSteamID(Convert.ToUInt64(steamID)));
+                    }
+                }               
+
+                GameEventLogManager.AddLog(EntryPoint.Language.ONLINE_PLAYER_LISTS_LOADED);
+            }).Start();
         }
 
         public static bool Host
@@ -151,19 +310,28 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             }
         }
 
+        private static readonly string PlayerWhitelistURL = "https://raw.githubusercontent.com/Hikaria0108/GTFO-Anti-Cheat/main/globalplayerwhitelist.txt";
+
+        private static readonly string PlayerBlacklistURL = "https://raw.githubusercontent.com/Hikaria0108/GTFO-Anti-Cheat/main/globalplayerblacklist.txt";
+
         public string File_Blacklist { get; set; }
 
         public string File_Whitelist { get; set; }
 
-        public List<CSteamID> Blacklist { get; set; } = new List<CSteamID>();
+        public System.Collections.Generic.List<CSteamID> Blacklist { get; private set; } = new System.Collections.Generic.List<CSteamID>();
 
-        public List<CSteamID> Whitelist { get; set; } = new List<CSteamID>();
+        public System.Collections.Generic.List<CSteamID> Whitelist { get; private set; } = new System.Collections.Generic.List<CSteamID>();
+
+        public System.Collections.Generic.List<CSteamID> OnlineBlacklist { get; private set; } = new System.Collections.Generic.List<CSteamID>();
+
+        public System.Collections.Generic.List<CSteamID> OnlineWhitelist { get; private set; } = new System.Collections.Generic.List<CSteamID>();
 
         internal static LobbyManager Instance;
 
-        private static Dictionary<string, Thread> alerts = new Dictionary<string, Thread>();
+        /*
+        private static System.Collections.Generic.Dictionary<string, Thread> alerts = new System.Collections.Generic.Dictionary<string, Thread>();
 
-        private static Dictionary<string, Timer> alertsInstance = new Dictionary<string, Timer>();
+        private static System.Collections.Generic.Dictionary<string, Timer> alertsInstance = new System.Collections.Generic.Dictionary<string, Timer>();
 
         public static void StartKickorBanTimer(SNet_Player player, string reason, string threadName)
         {
@@ -198,6 +366,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             alertsInstance[threadName] = timer;
         }
 
+
         private class Timer
         {
             public void add()
@@ -207,14 +376,15 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
 
             public void Start()
             {
-                ChatManager.AddQueue(string.Format("<#F80>[GTFO Anti-Cheat] 检测到玩家 {0} 的作弊行为: {1}", _player.NickName, _reason));
+                ChatManager.AddQueue(string.Format(EntryPoint.Language.CHEATER_DETECTED_MESSAGE, _player.NickName));
+                ChatManager.AddQueue(string.Format(EntryPoint.Language.CHEATING_BEHAVIOR_MESSAGE, _reason));
 
                 string choice;
 
                 if (EntryPoint.AutoBanPlayer)
                 {
-                    _choice = KickChoise.BAN;
-                    choice = EntryPoint.Language.BAN;
+                    _choice = KickChoise.KICKANDBAN;
+                    choice = EntryPoint.Language.KICKANDBAN;
                 }
                 else if (EntryPoint.AutoKickPlayer)
                 {
@@ -239,7 +409,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                     case KickChoise.KICK:
                         LobbyManager.Current.KickPlayer(_player.PlayerSlotIndex(), _reason);
                         break;
-                    case KickChoise.BAN:
+                    case KickChoise.KICKANDBAN:
                         LobbyManager.Current.BanPlayer(_player.PlayerSlotIndex(), _reason);
                         break;
                     case KickChoise.NONE:
@@ -263,13 +433,14 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
 
             private SNet_Player _player;
         }
-    }
 
-    [Flags]
-    public enum KickChoise
-    {
-        NONE = 1,
-        KICK = 2,
-        BAN = 3
+        [Flags]
+        public enum KickChoise
+        {
+            NONE = 1,
+            KICK = 2,
+            KICKANDBAN = 3
+        }
+        */
     }
 }

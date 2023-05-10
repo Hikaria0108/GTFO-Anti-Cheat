@@ -65,5 +65,23 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
         private static List<string> queue = new List<string>();
 
         private static int front = 0;
+
+        public static void DetectBroadcast(string playerName, string message)
+        {
+            if (!EntryPoint.EnableBroadcast)
+                return;
+
+            ChatManager.Speak(string.Format(EntryPoint.Language.CHEATER_DETECTED_MESSAGE, playerName));
+            ChatManager.Speak(string.Format(EntryPoint.Language.CHEATING_BEHAVIOR_MESSAGE, message));
+        }
+
+        public static void KickBanBroadcast(string playerName, string reason)
+        {
+            if (!EntryPoint.EnableBroadcast)
+                return;
+
+            ChatManager.Speak(string.Format(EntryPoint.Language.CHEATER_DETECTED_MESSAGE, playerName));
+            ChatManager.Speak(string.Format(EntryPoint.Language.KICK_OR_BAN_REASON, reason));
+        }
     }
 }

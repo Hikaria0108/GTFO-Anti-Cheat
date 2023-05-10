@@ -6,12 +6,12 @@
 
         public const string PLUGIN_NAME = "GTFO_Anti-Cheat";
 
-        public const string PLUGIN_VERSION = "0.0.2";
+        public const string PLUGIN_VERSION = "0.1.0";
 
         public const string AUTHOR = "ゼロツー";
 
         public const string BRANCH = "debug";
 
-        public const string INTERNAL_VERSION = "00002";
+        public const string INTERNAL_VERSION = "00004";
     }
 }
