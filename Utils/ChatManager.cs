@@ -1,4 +1,5 @@
-﻿using Player;
+﻿using Hikaria.GTFO_Anti_Cheat.Lang;
+using Player;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -70,7 +71,12 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
         {
             if (!EntryPoint.EnableBroadcast)
                 return;
-
+            if (EntryPoint.IsEnglish)
+            {
+                ChatManager.SpeakInSeparate(string.Format(EntryPoint.Language.CHEATER_DETECTED_MESSAGE, playerName));
+                ChatManager.SpeakInSeparate(string.Format(EntryPoint.Language.CHEATING_BEHAVIOR_MESSAGE, message));
+                return;
+            }
             ChatManager.Speak(string.Format(EntryPoint.Language.CHEATER_DETECTED_MESSAGE, playerName));
             ChatManager.Speak(string.Format(EntryPoint.Language.CHEATING_BEHAVIOR_MESSAGE, message));
         }
@@ -80,6 +86,12 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             if (!EntryPoint.EnableBroadcast)
                 return;
 
+            if (EntryPoint.IsEnglish)
+            {
+                ChatManager.SpeakInSeparate(string.Format(EntryPoint.Language.CHEATER_DETECTED_MESSAGE, playerName));
+                ChatManager.SpeakInSeparate(string.Format(EntryPoint.Language.KICK_OR_BAN_REASON, reason));
+                return;
+            }
             ChatManager.Speak(string.Format(EntryPoint.Language.CHEATER_DETECTED_MESSAGE, playerName));
             ChatManager.Speak(string.Format(EntryPoint.Language.KICK_OR_BAN_REASON, reason));
         }

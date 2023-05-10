@@ -50,6 +50,9 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                                 case "detect":
                                     DetectBooster(array[2].ToLower(), StringToBool(array[3]));
                                     return;
+                                case "unban":
+                                    LobbyManager.Current.UnBanPlayer(Convert.ToUInt64(array[2]));
+                                    return;
                             }
                             throw new Exception("Unknown Command");
                         }
@@ -69,6 +72,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             {
             }
         }
+
 
         public static bool StringToBool(string param)
         {

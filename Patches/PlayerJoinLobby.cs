@@ -36,10 +36,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     {
                         EntryPoint.IsLogged = true;
                         HttpHelper.CheckUpdate();
-                        if (EntryPoint.EnableOnlinePlayerLists)
-                        {
-                            LobbyManager.LoadOnlineLists();
-                        }
                     }
 
                     if (!SNet.IsMaster)
@@ -49,6 +45,11 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     else
                     {
                         GameEventLogManager.AddLog(EntryPoint.Language.IS_HOST);
+
+                        if (EntryPoint.EnableOnlinePlayerLists)
+                        {
+                            LobbyManager.LoadOnlineLists();
+                        }
                     }
                 }
 
@@ -102,20 +103,27 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
         private static bool SNet_Lobby_STEAM__PlayerJoined__Prefix(SNet_Player player)
         {
+            if (!LobbyManager.Host)
+            {
+                return true;
+            }
+
             //若启用在线名单则优先匹配在线名单
             if (EntryPoint.EnableOnlinePlayerLists)
             {
                 CSteamID steamID = new CSteamID(player.Profile.player.lookup);
                 bool result1 = LobbyManager.Current.IsOnlineWhitelistPlayer(steamID) || !LobbyManager.Current.IsOnlineBlacklistPlayer(steamID);
                 if (!result1)
-                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY, player.NickName, player.Profile.player.lookup));
-                return result1;
+                {
+                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY, EntryPoint.Language.ONLINE_BANNED, player.NickName, player.Profile.player.lookup));
+                    return result1;
+                }
             }
 
             //匹配本地名单
             bool result2 = LobbyManager.Current.IsWhitelistPlayer(player) || !LobbyManager.Current.IsPlayerBanned(player);
             if (!result2)
-                GameEventLogManager.AddLog(string.Format(EntryPoint.Language.BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY, player.NickName, player.Profile.player.lookup));
+                GameEventLogManager.AddLog(string.Format(EntryPoint.Language.BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY, EntryPoint.Language.LOCAL_BANNED, player.NickName, player.Profile.player.lookup));
             return result2;
         }
 
@@ -162,7 +170,14 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     Thread.Sleep(1000);
                     this._sec--;
                 }
-                ChatManager.AddQueue(_msg);
+                if(EntryPoint.IsEnglish)
+                {
+                    ChatManager.SpeakInSeparate(_msg);
+                }
+                else
+                {
+                    ChatManager.AddQueue(_msg);
+                }
             }
 
             public Timer(string msg)

@@ -1,15 +1,7 @@
 ﻿namespace Hikaria.GTFO_Anti_Cheat.Lang
 {
     internal class English : LanguageBase
-    {
-        public override string WORKING_MESSAGE
-        {
-            get
-            {
-                return "<#F80>[GTFO_Anti-Cheat] Is now functioning, anti-cheating is only avaliable on host";
-            }
-        }
-
+    { 
         public override string COMMAND_LIST
         {
             get
@@ -18,19 +10,11 @@
             }
         }
 
-        public override string CURRENT_VERSION
-        {
-            get
-            {
-                return "<#F80>[GTFO_Anti-Cheat] Build v{0}";
-            }
-        }
-
         public override string CHECKING_UPDATE
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] Checking for new updates...";
+                return "<#F80>[GTFO Anti-Cheat] Checking for updates...";
             }
         }
 
@@ -62,7 +46,7 @@
         {
             get
             {
-                return "<#F00>[GTFO_Anti-Cheat] Anti-cheating will not function since you are not the host";
+                return "<#F80>[GTFO_Anti-Cheat] <#F00>Anti-cheating will not function since you are not the host";
             }
         }
 
@@ -70,7 +54,7 @@
         {
             get
             {
-                return "<#0F0>[GTFO_Anti-Cheat] Anti-cheating will function since you are the host";
+                return "<#F80>[GTFO_Anti-Cheat] <#0F0>Anti-cheating will function since you are the host";
             }
         }
 
@@ -78,14 +62,14 @@
         {
             get
             {
-                return "<#F00>[GTFO_Anti-Cheat] Illegal plugin(s) has been detected and anti-cheating has been disabled";
+                return "<#F80>[GTFO_Anti-Cheat] <#F00>Illegal plugin(s) has been detected and anti-cheating has been disabled";
             }
         }
         public override string ENVIRONMENT_ERROR
         {
             get
             {
-                return "<#F00>[GTFO_Anti-Cheat] Environment anomaly detected, anti-cheat has been disabled";
+                return "<#F80>[GTFO_Anti-Cheat] <#F00>Environment anomaly detected, anti-cheat has been disabled";
             }
         }
 
@@ -133,7 +117,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <#0F0>Currently the latest version, build v{0}";
+                return "<#F80>[GTFO Anti-Cheat] <#0F0>Currently is the latest version, build v{0}";
             }
         }
 
@@ -141,7 +125,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] New version detected v{0}";
+                return "<#F80>[GTFO Anti-Cheat] Update detected v{0}";
             }
         }
 
@@ -197,7 +181,31 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] Banned player {0}[{1}] was refused to join lobby";
+                return "<#F80>[GTFO Anti-Cheat] {0} banned player {1}[{2}] was refused to join lobby";
+            }
+        }
+
+        public override string LOCAL_BANNED
+        {
+            get
+            {
+                return "Local";
+            }
+        }
+
+        public override string ONLINE_BANNED
+        {
+            get
+            {
+                return "Online";
+            }
+        }
+
+        public override string LOCAL_UNBAN_PLAYER_MESSAGE
+        {
+            get
+            {
+                return "<#0F0>Player [{0}] has been unbanned locally";
             }
         }
     }

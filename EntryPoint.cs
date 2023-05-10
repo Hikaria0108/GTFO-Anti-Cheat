@@ -71,6 +71,8 @@ namespace Hikaria.GTFO_Anti_Cheat
 
         internal static bool EnableBroadcast;
 
+        internal static bool IsEnglish;
+
         private static bool DetectEnvironment()
         {
             BepInEx.PluginInfo pluginInfo;

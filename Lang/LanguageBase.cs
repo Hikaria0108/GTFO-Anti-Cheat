@@ -2,11 +2,7 @@
 {
     public abstract class LanguageBase
     {
-        public abstract string WORKING_MESSAGE { get; }
-
         public abstract string COMMAND_LIST { get; }
-
-        public abstract string CURRENT_VERSION { get; }
 
         public abstract string CHECKING_UPDATE { get; }
 
@@ -51,5 +47,11 @@
         public abstract string CHANGE_LOG { get; }
 
         public abstract string BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY { get; }
+
+        public abstract string ONLINE_BANNED { get; }
+
+        public abstract string LOCAL_BANNED { get; }
+
+        public abstract string LOCAL_UNBAN_PLAYER_MESSAGE { get; }
     }
 }
