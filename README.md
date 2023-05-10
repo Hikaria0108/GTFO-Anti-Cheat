@@ -17,7 +17,7 @@
  
 ## 聊天窗口命令
  - /gac help 查看所有可用命令
- - /gac msg [on|off] 开启|关闭 玩家作弊通告
+ - /gac broadcast [on|off] 开启|关闭 玩家作弊通告
  - /gac autokick [on|off] 开启|关闭 自动踢出作弊玩家
  - /gac autoban [on|off] 开启|关闭 自动踢出并封禁作弊玩家
  - /gac unban [SteamID64] 手动解除本地玩家封禁
