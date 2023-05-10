@@ -152,6 +152,13 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             }
         }
 
+        public void UnBanPlayer(ulong id)
+        {
+            CSteamID steamID = new CSteamID(id);
+            UnBanPlayer(steamID);
+            GameEventLogManager.AddLog(string.Format(EntryPoint.Language.LOCAL_UNBAN_PLAYER_MESSAGE, id));
+        }
+
         public void UnBanPlayer(CSteamID steamID)
         {
             bool flag = this.Blacklist.Remove(steamID);

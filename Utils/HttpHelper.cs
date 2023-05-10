@@ -49,7 +49,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                     LatestInternalVersion = newVersion[0];
                     LatestVersion = newVersion[1];
                     string changeLog;
-                    if (EntryPoint.Language.GetType() == typeof(SimplifiedChinese))
+                    if (!EntryPoint.IsEnglish)
                     {
                         changeLog = content[1];
                     }

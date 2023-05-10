@@ -12,6 +12,6 @@
 
         public const string BRANCH = "debug";
 
-        public const string INTERNAL_VERSION = "00004";
+        public const string INTERNAL_VERSION = "00005";
     }
 }

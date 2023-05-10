@@ -4,27 +4,11 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
 {
     internal class SimplifiedChinese : LanguageBase
     {
-        public override string WORKING_MESSAGE
-        {
-            get
-            {
-                return "<color=orange>[GTFO Anti-Cheat]</color> 现已工作，本mod仅限房主有效";
-            }
-        }
-
         public override string COMMAND_LIST
         {
             get
             {
-                return "<color=orange>[GTFO Anti-Cheat]</color> /achelp 可查看所有指令";
-            }
-        }
-
-        public override string CURRENT_VERSION
-        {
-            get
-            {
-                return "<color=orange>[GTFO Anti-Cheat]</color> 版本v{0}";
+                return "<#F80>[GTFO Anti-Cheat] /gac help 可查看所有指令";
             }
         }
 
@@ -32,7 +16,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<color=orange>[GTFO Anti-Cheat]</color> 开始检查更新...";
+                return "<#F80>[GTFO Anti-Cheat] 开始检查更新...";
             }
         }
 
@@ -96,7 +80,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<color=orange>[GTFO Anti-Cheat] 本房间已启用反作弊</color>";
+                return "<#F80>[GTFO Anti-Cheat] 本房间已启用反作弊";
             }
         }
 
@@ -152,7 +136,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <#FFF>正在加载在线玩家黑白名单...";
+                return "<#F80>[GTFO Anti-Cheat] 正在加载在线玩家黑白名单...";
             }
         }
 
@@ -200,7 +184,31 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] 被封禁玩家 {0}[{1}] 被拒绝加入大厅";
+                return "<#F80>[GTFO Anti-Cheat] 被{0}封禁玩家 {1}[{2}] 被拒绝加入大厅";
+            }
+        }
+
+        public override string LOCAL_BANNED
+        {
+            get
+            {
+                return "本地";
+            }
+        }
+
+        public override string ONLINE_BANNED
+        {
+            get
+            {
+                return "在线";
+            }
+        }
+
+        public override string LOCAL_UNBAN_PLAYER_MESSAGE
+        {
+            get
+            {
+                return "<#0F0>已为ID为 [{0}] 的玩家解除本地封禁";
             }
         }
     }

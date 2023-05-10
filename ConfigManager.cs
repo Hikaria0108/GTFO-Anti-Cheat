@@ -45,9 +45,11 @@ namespace Hikaria.GTFO_Anti_Cheat
                 {
                     if (value == "en-us")
                     {
+                        EntryPoint.IsEnglish = true;
                         return new English();
                     }
                 }
+                EntryPoint.IsEnglish = false;
                 return new SimplifiedChinese();
             }
         }
