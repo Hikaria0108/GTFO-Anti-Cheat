@@ -208,5 +208,29 @@
                 return "<#0F0>Player [{0}] has been unbanned locally";
             }
         }
+
+        public override string WEAPON_MODEL_HACK 
+        { 
+            get
+            {
+                return "Modified weapon model";
+            } 
+        }
+
+        public override string WEAPON_DAMAGE_HACK
+        {
+            get
+            {
+                return "Modified weapon damage";
+            }
+        }
+
+        public override string WEAPON_DATA_HACK
+        {
+            get
+            {
+                return "Modified weapon data";
+            }
+        }
     }
 }

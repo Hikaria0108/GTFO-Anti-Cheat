@@ -2,10 +2,11 @@
 using HarmonyLib;
 using BepInEx;
 using Hikaria.GTFO_Anti_Cheat.Lang;
-using Hikaria.GTFO_Anti_Cheat.Utils;
+using Hikaria.GTFO_Anti_Cheat.Managers;
 using Hikaria.GTFO_Anti_Cheat.Patches;
-using Patch = Hikaria.GTFO_Anti_Cheat.Utils.Patch;
+using Hikaria.GTFO_Anti_Cheat.Utils;
 using Il2CppInterop.Runtime.Injection;
+using Patch = Hikaria.GTFO_Anti_Cheat.Utils.Patch;
 
 namespace Hikaria.GTFO_Anti_Cheat
 {
@@ -18,14 +19,20 @@ namespace Hikaria.GTFO_Anti_Cheat
 
             ConfigManager configManager = new ConfigManager();
             EntryPoint.Language = configManager.Language;
-            EntryPoint.AutoBanPlayer = configManager.AutoBanPlayer;
-            EntryPoint.AutoKickPlayer = configManager.AutoKickPlayer;
-            EntryPoint.DetectBoosterHack = configManager.DetectBoosterHack;
-            EntryPoint.DisableEnvironmentDetect = configManager.DetectEnvironmentDetect;
-            EntryPoint.EnableOnlinePlayerLists = configManager.LoadOnlinePlayerLists;
             EntryPoint.EnableBroadcast = configManager.EnableBroadcast;
 
-            if(!EntryPoint.DisableEnvironmentDetect)
+            EntryPoint.DisableEnvironmentDetect = configManager.DetectEnvironmentDetect;
+
+            EntryPoint.AutoBanPlayer = configManager.AutoBanPlayer;
+            EntryPoint.AutoKickPlayer = configManager.AutoKickPlayer;
+            EntryPoint.EnableOnlinePlayerLists = configManager.LoadOnlinePlayerLists;
+
+            
+            EntryPoint.DetectWeaponModelHack = configManager.DetectWeaponModelHack;
+            EntryPoint.DetectBoosterHack = configManager.DetectBoosterHack;
+            EntryPoint.DetectWeaponDataHack = configManager.DetectWeaponDataHack;
+
+            if (!EntryPoint.DisableEnvironmentDetect)
             {
                 if (DetectEnvironment())
                 {
@@ -63,7 +70,7 @@ namespace Hikaria.GTFO_Anti_Cheat
 
         internal static bool DisableEnvironmentDetect;
 
-        internal static bool EnableDebugInfo;
+        internal static bool EnableDebugInfo = true;
 
         internal static bool IsLogged;
 
@@ -72,6 +79,10 @@ namespace Hikaria.GTFO_Anti_Cheat
         internal static bool EnableBroadcast;
 
         internal static bool IsEnglish;
+
+        internal static bool DetectWeaponModelHack;
+
+        internal static bool DetectWeaponDataHack;
 
         private static bool DetectEnvironment()
         {
@@ -105,7 +116,7 @@ namespace Hikaria.GTFO_Anti_Cheat
             Patch.RegisterPatch<PlayerJoinLobby>();
             Patch.RegisterPatch<ChatBoxCommand>();
             Patch.RegisterPatch<DetectBoosterDataHack>();
-            //Patch.RegisterPatch<DetectDamangeHack>();
+            Patch.RegisterPatch<DetectWeaponDataHack>();
         }
     }
 }

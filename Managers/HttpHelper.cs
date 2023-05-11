@@ -6,7 +6,7 @@ using System.Linq;
 using Hikaria.GTFO_Anti_Cheat.Lang;
 using System.Threading;
 
-namespace Hikaria.GTFO_Anti_Cheat.Utils
+namespace Hikaria.GTFO_Anti_Cheat.Managers
 {
     internal static class HttpHelper
     {

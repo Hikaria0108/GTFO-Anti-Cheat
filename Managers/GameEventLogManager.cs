@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using CellMenu;
 using UnityEngine;
 
-namespace Hikaria.GTFO_Anti_Cheat.Utils
+namespace Hikaria.GTFO_Anti_Cheat.Managers
 {
     internal class GameEventLogManager : MonoBehaviour
     {

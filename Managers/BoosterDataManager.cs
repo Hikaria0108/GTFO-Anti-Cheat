@@ -1,16 +1,181 @@
-﻿using System;
-using System.Collections.Generic;
-using BoosterImplants;
+﻿using BoosterImplants;
 using GameData;
-using Il2CppSystem.Collections.Generic;
-using System.Linq;
+using Hikaria.GTFO_Anti_Cheat.Utils;
+using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
+using Player;
+using SNetwork;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using System.Linq;
+using static BoosterImplant;
 
-namespace Hikaria.GTFO_Anti_Cheat.Utils
+namespace Hikaria.GTFO_Anti_Cheat.Managers
 {
-    internal static class BoosterTemplateDataManager
+    internal static class BoosterDataManager
     {
+        public static float GetBoosterDamageMultiForPlayer(InventorySlot slot, SNet_Player player)
+        {
+            float result = 1f;
+
+            AgentModifier targetModifier = AgentModifier.None;
+            switch (slot)
+            {
+                case InventorySlot.GearMelee:
+                    targetModifier = AgentModifier.MeleeDamage;
+                    break;
+                case InventorySlot.GearStandard:
+                    targetModifier = AgentModifier.StandardWeaponDamage;
+                    break;
+                case InventorySlot.GearSpecial:
+                    targetModifier = AgentModifier.SpecialWeaponDamage;
+                    break;
+                default: //不是伤害类强化剂
+                    return result;
+            }
+
+            PlayerBoosterImplantState state;
+            if (BoosterImplantManager.TryGetPlayerBoosterImplantState(player, out state))
+            {
+                int playerSlotIndex = player.PlayerSlotIndex();
+                if (playerBoosters.ContainsKey(playerSlotIndex))
+                {
+                    foreach (Booster_Template booster in playerBoosters[playerSlotIndex])
+                    {
+                        foreach (Booster_Effect effect in booster.Effects)
+                        {
+                            if (effect.id == (uint)targetModifier) //找到对应伤害类属性的强化剂
+                            {
+                                Logs.LogMessage("Find matched EffectID:" + effect.id);
+                                if (booster.Conditions.Count != 0) //判断是否有条件
+                                {
+                                    foreach (uint condition in booster.Conditions) //遍历这个强化剂的所有条件
+                                    {
+                                        if (state.m_conditionMap[(BoosterCondition)condition]) //如果这个条件是激活状态
+                                        {
+                                            if(EntryPoint.EnableDebugInfo)
+                                            {
+                                                Logs.LogMessage(string.Format("EffectID:{0},Value:{1}", effect.id, effect.value));
+                                            }
+                                            
+                                            result += effect.value;
+                                        }
+                                    }
+                                }
+                                else //没有条件直接加进去
+                                {
+                                    if (EntryPoint.EnableDebugInfo)
+                                    {
+                                        Logs.LogMessage(string.Format("EffectID:{0},Value:{1}", effect.id, effect.value));
+                                    }
+
+                                    result += effect.value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Logs.LogMessage(targetModifier.ToString() + "Multi: " + result);
+
+            return result;
+        }
+
+        public static List<Booster_Template> CreateBooster_Template(pBoosterImplantsWithOwner boosterImplantsWithOwner)
+        {
+            List<Booster_Template> boosters = new List<Booster_Template>();
+
+            List<pBoosterImplantData> BoosterImplantDatas = new List<pBoosterImplantData>();
+
+            if (boosterImplantsWithOwner.BasicImplant.BoosterEffectCount != 0) 
+            {
+                BoosterImplantDatas.Add(boosterImplantsWithOwner.BasicImplant);
+            }
+            if (boosterImplantsWithOwner.AdvancedImplant.BoosterEffectCount != 0)
+            {
+                BoosterImplantDatas.Add(boosterImplantsWithOwner.AdvancedImplant);
+            }
+            if (boosterImplantsWithOwner.SpecializedImplant.BoosterEffectCount != 0)
+            {
+                BoosterImplantDatas.Add(boosterImplantsWithOwner.SpecializedImplant);
+            }
+
+            foreach (pBoosterImplantData boosterImplantData in BoosterImplantDatas)
+            {
+                //用于判断是否存在有效属性
+                bool hasEffect = false;
+
+                Booster_Template booster = new Booster_Template()
+                {
+                    Conditions = new List<uint>(),
+                    RandomConditions = new List<uint>(),
+                    Effects = new List<Booster_Effect>(),
+                    RandomEffectsGroups = new List<List<Booster_Effect>>()
+                };
+
+                foreach (uint conditionID in boosterImplantData.Conditions)
+                {
+                    if (conditionID != 0U)
+                    {
+                        if (EntryPoint.EnableDebugInfo)
+                        {
+                            Logs.LogMessage(string.Format("Add Condition: id:{0}", conditionID));
+                        }
+                        booster.Conditions.Add(conditionID);
+                    }
+                }
+
+                foreach (pBoosterEffectData data in boosterImplantData.BoosterEffectDatas)
+                {
+                    if (data.BoosterEffectID != 0U)
+                    {
+                        hasEffect = true;
+                        Booster_Effect effect = new Booster_Effect
+                        {
+                            id = data.BoosterEffectID,
+                            value = data.EffectValue,
+                            maxValue = 0f,
+                            minValue = 0f
+                        };
+                        if (EntryPoint.EnableDebugInfo)
+                        {
+                            Logs.LogMessage(string.Format("Add Effect: id:{0}, value:{1}", effect.id, effect.value)); 
+                        }
+                        booster.Effects.Add(effect);
+                    }
+                }
+
+                if (hasEffect)
+                {
+                    if (EntryPoint.EnableDebugInfo)
+                    {
+                        Logs.LogMessage("Add Booster");
+                    }
+                    boosters.Add(booster);
+                }
+            }
+
+            return boosters;
+        }
+
+
+        //为players存储强化剂数据
+        public static void StorePlayerBoosters(SNet_Player player, pBoosterImplantsWithOwner boosterImplantsWithOwner)
+        {
+            int playerSlotIndex = player.PlayerSlotIndex();
+
+            if (playerSlotIndex == -1)
+                return;
+            
+            if(!playerBoosters.ContainsKey(playerSlotIndex))
+            {
+                playerBoosters.Add(playerSlotIndex, CreateBooster_Template(boosterImplantsWithOwner));
+                return;
+            }
+
+            playerBoosters[playerSlotIndex] = CreateBooster_Template(boosterImplantsWithOwner);
+        }
+
         public static bool CheckBoosters(pBoosterImplantsWithOwner boosterImplantsWithOwner)
         {
             //低效高效特效三种标志
@@ -41,11 +206,17 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
 
                 foreach (uint conditionId in conditions)
                 {
-                    Logs.LogMessage("ConditionID:" + conditionId.ToString());
+                    if (conditionId != 0U) 
+                    {
+                        Logs.LogMessage("ConditionID:" + conditionId.ToString());
+                    }
                 }
                 foreach (pBoosterEffectData data in effectDatas)
                 {
-                    Logs.LogMessage("EffectID:" + data.BoosterEffectID.ToString() + ", EffectValue:" + data.EffectValue.ToString());
+                    if (data.BoosterEffectID != 0U) 
+                    {
+                        Logs.LogMessage("EffectID:" + data.BoosterEffectID.ToString() + ", EffectValue:" + data.EffectValue.ToString());
+                    }
                 }
                 Logs.LogMessage("End of Booster Info");
             }
@@ -203,27 +374,27 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
 
         public static void LoadData()
         {
-            booster_Templates.Add(BoosterImplantCategory.Muted, new System.Collections.Generic.List<Booster_Template>());
-            booster_Templates.Add(BoosterImplantCategory.Bold, new System.Collections.Generic.List<Booster_Template>());
-            booster_Templates.Add(BoosterImplantCategory.Aggressive, new System.Collections.Generic.List<Booster_Template>());
+            booster_Templates.Add(BoosterImplantCategory.Muted, new List<Booster_Template>());
+            booster_Templates.Add(BoosterImplantCategory.Bold, new List<Booster_Template>());
+            booster_Templates.Add(BoosterImplantCategory.Aggressive, new List<Booster_Template>());
 
-            GameDataBlockWrapper<BoosterImplantTemplateDataBlock> wrapper = GameDataBlockBase<BoosterImplantTemplateDataBlock>.Wrapper;
-            for (int i = 0; i < wrapper.Blocks.Count; i++)
+            Il2CppArrayBase<BoosterImplantTemplateDataBlock> blocklist = GameDataBlockBase<BoosterImplantTemplateDataBlock>.GetAllBlocksForEditor();
+            for (int i = 0; i < blocklist.Count; i++)
             {
                 if (EntryPoint.EnableDebugInfo)
                 {
-                    Logs.LogMessage(string.Format("Category:{0}, EffectType:{1}", wrapper.Blocks[i].ImplantCategory, wrapper.Blocks[i].MainEffectType));
+                    Logs.LogMessage(string.Format("Category:{0}, EffectType:{1}", blocklist[i].ImplantCategory, blocklist[i].MainEffectType));
                 }
 
                 Booster_Template booster = new Booster_Template()
                 {
-                    Conditions = new System.Collections.Generic.List<uint>(),
-                    RandomConditions = new System.Collections.Generic.List<uint>(),
-                    Effects = new System.Collections.Generic.List<Booster_Effect>(),
-                    RandomEffectsGroups = new System.Collections.Generic.List<System.Collections.Generic.List<Booster_Effect>>()
+                    Conditions = new List<uint>(),
+                    RandomConditions = new List<uint>(),
+                    Effects = new List<Booster_Effect>(),
+                    RandomEffectsGroups = new List<List<Booster_Effect>>()
                 };
 
-                Il2CppSystem.Collections.Generic.List<uint> conditions = wrapper.Blocks[i].Conditions;
+                Il2CppSystem.Collections.Generic.List<uint> conditions = blocklist[i].Conditions;
                 for (int n = 0; n < conditions.Count; n++)
                 {
                     if (EntryPoint.EnableDebugInfo)
@@ -233,7 +404,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                     booster.Conditions.Add(conditions[n]);
                 }
 
-                Il2CppSystem.Collections.Generic.List<uint> randomConditions = wrapper.Blocks[i].RandomConditions;
+                Il2CppSystem.Collections.Generic.List<uint> randomConditions = blocklist[i].RandomConditions;
                 for (int m = 0; m < randomConditions.Count; m++)
                 {
                     if (EntryPoint.EnableDebugInfo)
@@ -243,14 +414,15 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                     booster.RandomConditions.Add(randomConditions[m]);
                 }
 
-                Il2CppSystem.Collections.Generic.List<BoosterImplantEffectInstance> effectsInBlock = wrapper.Blocks[i].Effects;
+                Il2CppSystem.Collections.Generic.List<BoosterImplantEffectInstance> effectsInBlock = blocklist[i].Effects;
                 for (int j = 0; j < effectsInBlock.Count; j++)
                 {
                     Booster_Effect effect = new Booster_Effect
                     {
                         id = effectsInBlock[j].BoosterImplantEffect,
                         maxValue = effectsInBlock[j].MaxValue,
-                        minValue = effectsInBlock[j].MinValue
+                        minValue = effectsInBlock[j].MinValue,
+                        value = 0f
                     };
                     if (EntryPoint.EnableDebugInfo)
                     {
@@ -259,17 +431,18 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                     booster.Effects.Add(effect);
                 }
 
-                Il2CppSystem.Collections.Generic.List<Il2CppSystem.Collections.Generic.List<BoosterImplantEffectInstance>> randomEffectsGroups = wrapper.Blocks[i].RandomEffects;
+                Il2CppSystem.Collections.Generic.List<Il2CppSystem.Collections.Generic.List<BoosterImplantEffectInstance>> randomEffectsGroups = blocklist[i].RandomEffects;
                 for (int k = 0; k < randomEffectsGroups.Count; k++)
                 {
-                    System.Collections.Generic.List<Booster_Effect> effectsGroup = new System.Collections.Generic.List<Booster_Effect>();
+                    List<Booster_Effect> effectsGroup = new List<Booster_Effect>();
                     for (int l = 0; l < randomEffectsGroups[k].Count; l++)
                     {
                         Booster_Effect effect = new Booster_Effect
                         {
                             id = randomEffectsGroups[k][l].BoosterImplantEffect,
                             maxValue = randomEffectsGroups[k][l].MaxValue,
-                            minValue = randomEffectsGroups[k][l].MinValue
+                            minValue = randomEffectsGroups[k][l].MinValue,
+                            value = 0f
                         };
                         if (EntryPoint.EnableDebugInfo)
                         {
@@ -289,7 +462,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                     {
                         Logs.LogMessage(string.Format("Booster_Template index:[{0}][{1}]", i, k));
                     }
-                    booster_Templates[wrapper.Blocks[i].ImplantCategory].Add(booster);
+                    booster_Templates[blocklist[i].ImplantCategory].Add(booster);
                 }
             }
         }
@@ -316,18 +489,20 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             }
         }
 
-        public static System.Collections.Generic.Dictionary<BoosterImplantCategory, System.Collections.Generic.List<Booster_Template>> booster_Templates = new System.Collections.Generic.Dictionary<BoosterImplantCategory, System.Collections.Generic.List<Booster_Template>>();
+        public static Dictionary<BoosterImplantCategory, List<Booster_Template>> booster_Templates = new Dictionary<BoosterImplantCategory, List<Booster_Template>>();
 
         public struct Booster_Template
         {
-            public System.Collections.Generic.List<uint> Conditions;
+            public List<uint> Conditions;
 
-            public System.Collections.Generic.List<uint> RandomConditions;
+            public List<uint> RandomConditions;
 
-            public System.Collections.Generic.List<Booster_Effect> Effects;
+            public List<Booster_Effect> Effects;
 
-            public System.Collections.Generic.List<System.Collections.Generic.List<Booster_Effect>> RandomEffectsGroups;
+            public List<List<Booster_Effect>> RandomEffectsGroups;
         }
+
+
 
         public struct Booster_Effect
         {
@@ -336,6 +511,8 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             public float maxValue;
 
             public float minValue;
+
+            public float value;
         }
 
         private static string[] OldValidBoosterTemplatesDataBlocks =
@@ -378,5 +555,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             "{\"Deprecated\":false,\"PublicName\":\"SOLID\",\"Description\":\"\",\"DurationRange\":{\"x\":2.0,\"y\":3.0},\"DropWeight\":7.0,\"Conditions\":[],\"RandomConditions\":[],\"Effects\":[],\"RandomEffects\":[[{\"BoosterImplantEffect\":36,\"MinValue\":1.4,\"MaxValue\":1.53},{\"BoosterImplantEffect\":37,\"MinValue\":1.4,\"MaxValue\":1.53},{\"BoosterImplantEffect\":38,\"MinValue\":1.4,\"MaxValue\":1.53},{\"BoosterImplantEffect\":5,\"MinValue\":1.8,\"MaxValue\":2.0}],[{\"BoosterImplantEffect\":11,\"MinValue\":0.83,\"MaxValue\":0.87},{\"BoosterImplantEffect\":12,\"MinValue\":0.62,\"MaxValue\":0.71},{\"BoosterImplantEffect\":34,\"MinValue\":0.56,\"MaxValue\":0.62}]],\"ImplantCategory\":2,\"MainEffectType\":0,\"name\":\"Aggressive_InitialState\",\"internalEnabled\":true,\"persistentID\":49}",
         };
         private static uint offset = 41985;
+
+        private static Dictionary<int, List<Booster_Template>> playerBoosters = new Dictionary<int, List<Booster_Template>>();
     }
 }

@@ -3,10 +3,16 @@ using Hikaria.GTFO_Anti_Cheat.Utils;
 
 namespace Hikaria.GTFO_Anti_Cheat.Patches
 {
-    internal class DetectPlayerDataHack : Patch
+    internal class DetectPlayerBackpackDataHack : Patch
     {
         public override void Execute()
         {
+
+        }
+
+        private static void PlayerBackpackManager____Postfix(PlayerBackpack __instance)
+        {
+
 
         }
 
@@ -16,7 +22,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
         public override void Initialize()
         {
-            DetectPlayerDataHack.Instance = this;
+            DetectPlayerBackpackDataHack.Instance = this;
         }
 
         private const string PatchName = "DetectPlayerDataHack";

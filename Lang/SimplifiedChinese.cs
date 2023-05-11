@@ -184,7 +184,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] 被{0}封禁玩家 {1}[{2}] 被拒绝加入大厅";
+                return "<#F80>[GTFO Anti-Cheat] 玩家 {1}[{2}] 因 {0} 封禁被拒绝加入大厅";
             }
         }
 
@@ -209,6 +209,30 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
             get
             {
                 return "<#0F0>已为ID为 [{0}] 的玩家解除本地封禁";
+            }
+        }
+
+        public override string WEAPON_MODEL_HACK 
+        { 
+            get
+            {
+                return "修改武器模型";
+            } 
+        }
+
+        public override string WEAPON_DAMAGE_HACK
+        {
+            get
+            {
+                return "修改武器伤害";
+            }
+        }
+
+        public override string WEAPON_DATA_HACK
+        {
+            get
+            {
+                return "修改武器数据";
             }
         }
     }

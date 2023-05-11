@@ -8,8 +8,9 @@ using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using Hikaria.GTFO_Anti_Cheat.Utils;
 
-namespace Hikaria.GTFO_Anti_Cheat.Utils
+namespace Hikaria.GTFO_Anti_Cheat.Managers
 {
     internal class LobbyManager : ScriptableObject
     {

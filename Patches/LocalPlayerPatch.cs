@@ -1,5 +1,6 @@
 ﻿using Player;
 using UnityEngine;
+using Hikaria.GTFO_Anti_Cheat.Managers;
 using Hikaria.GTFO_Anti_Cheat.Utils;
 
 namespace Hikaria.GTFO_Anti_Cheat.Patches

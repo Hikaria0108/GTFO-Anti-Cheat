@@ -1,10 +1,4 @@
-﻿using UnityEngine;
-using Hikaria.GTFO_Anti_Cheat.Utils;
-using BoosterImplants;
-using SNetwork;
-using CellMenu;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using GameData;
+﻿using Hikaria.GTFO_Anti_Cheat.Utils;
 
 namespace Hikaria.GTFO_Anti_Cheat.Patches
 {

@@ -1,4 +1,4 @@
-﻿namespace Hikaria.GTFO_Anti_Cheat
+﻿namespace Hikaria.GTFO_Anti_Cheat.Managers
 {
     internal class ConfigDescription
     {
@@ -62,7 +62,7 @@
         {
             get
             {
-                return "自动封禁并封禁作弊玩家，接受的值：[true|false]";
+                return "自动踢出并封禁作弊玩家，接受的值：[true|false]";
             }
         }
 
@@ -85,7 +85,7 @@
         {
             get
             {
-                return "开启检测强化剂作弊，接受的值：[true|false]";
+                return "启用强化剂数据检测，接受的值：[true|false]";
             }
         }
 
@@ -141,7 +141,39 @@
         {
             get
             {
-                return "启用作弊玩家消息通报，接受的值：[true|false]";
+                return "启用玩家作弊通报，接受的值：[true|false]";
+            }
+        }
+
+        internal static string DETECT_WEAPON_MODEL_HACK_NAME
+        {
+            get
+            {
+                return "DetectWeaponModelHack";
+            }
+        }
+
+        internal static string DETECT_WEAPON_MODEL_HACK_DESC
+        {
+            get
+            {
+                return "启用武器模型数据检测，接受的值：[true|false]";
+            }
+        }
+
+        internal static string DETECT_WEAPON_DATA_HACK_DESC
+        {
+            get
+            {
+                return "启用武器数据检测，接受的值：[true|false]";
+            }
+        }
+
+        internal static string DETECT_WEAPON_DATA_HACK_NAME
+        {
+            get
+            {
+                return "DetectWeaponDataHack";
             }
         }
     }

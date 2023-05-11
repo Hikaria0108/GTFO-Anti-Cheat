@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Hikaria.GTFO_Anti_Cheat.Utils;
+using Hikaria.GTFO_Anti_Cheat.Managers;
 using SNetwork;
 using Steamworks;
+using Hikaria.GTFO_Anti_Cheat.Utils;
 
 namespace Hikaria.GTFO_Anti_Cheat.Patches
 {
@@ -36,6 +37,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     {
                         EntryPoint.IsLogged = true;
                         HttpHelper.CheckUpdate();
+                        GameEventLogManager.AddLog(EntryPoint.Language.COMMAND_LIST);
                     }
 
                     if (!SNet.IsMaster)

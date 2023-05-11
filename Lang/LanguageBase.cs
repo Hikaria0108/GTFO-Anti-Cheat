@@ -1,4 +1,6 @@
-﻿namespace Hikaria.GTFO_Anti_Cheat.Lang
+﻿using System.Security.Policy;
+
+namespace Hikaria.GTFO_Anti_Cheat.Lang
 {
     public abstract class LanguageBase
     {
@@ -53,5 +55,11 @@
         public abstract string LOCAL_BANNED { get; }
 
         public abstract string LOCAL_UNBAN_PLAYER_MESSAGE { get; }
+
+        public abstract string WEAPON_MODEL_HACK { get; }
+
+        public abstract string WEAPON_DAMAGE_HACK { get; }
+
+        public abstract string WEAPON_DATA_HACK { get; }
     }
 }
