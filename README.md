@@ -29,5 +29,4 @@
  - /gac autoban [on|off] 开启|关闭 自动踢出并封禁作弊玩家
  - /gac unban [SteamID64] 手动解除本地玩家封禁
  - /gac detect booster [on|off] 开启|关闭 强化剂数据检测
- - /gac detect weaponmodel [on|off] 开启|关闭 武器模型数据检测
  - /gac detect weapondata [on|off] 开启|关闭 武器数据检测
