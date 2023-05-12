@@ -78,7 +78,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
                 }
                 catch (Exception arg2)
                 {
-                    EntryPoint.Instance.Log.LogFatal(string.Format("未能获得 ({0}) 的前缀补丁方法: {1}", arg, arg2));
+                    Logs.LogFatal(string.Format("未能获得 ({0}) 的前缀补丁方法: {1}", arg, arg2));
                 }
             }
             if ((patchType & PatchType.Postfix) > (PatchType)0)
@@ -129,7 +129,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
             }
             if (RegisteredPatches.ContainsKey(typeof(T)))
             {
-                Logs.LogDebug(string.Format(EntryPoint.Language.IGNORE_REPEAT_PATCH, typeof(T).Name));
+                Logs.LogMessage(string.Format(EntryPoint.Language.IGNORE_REPEAT_PATCH, typeof(T).Name));
                 return;
             }
             T t = Activator.CreateInstance<T>();

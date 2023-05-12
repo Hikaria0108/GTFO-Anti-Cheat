@@ -4,9 +4,6 @@ using Hikaria.GTFO_Anti_Cheat.Utils;
 using System.Collections.Generic;
 using Il2CppSystem.Text.RegularExpressions;
 using SNetwork;
-using Gear;
-using Player;
-using static Gear.GearIDRange;
 
 namespace Hikaria.GTFO_Anti_Cheat.Managers
 {
@@ -14,22 +11,14 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
     {
         public static bool CheckIsValidWeaponGearIDRangeDataForPlayer(SNet_Player player)
         {
+            if (player.PlayerSlotIndex() == -1)
+            {
+                return false;
+            }
+
             foreach (GearIDRange gearIDRange in GearManager.Current.m_gearPerSlot[player.PlayerSlotIndex()]) 
             {
-                string gearJson = gearIDRange.ToJSON();
-
-                string pattern = "(?<=Comps\":)(.*?)(?=,\"MatTrans\")";
-                Match comps = Regex.Match(gearJson, pattern);
-
-                string pattern2 = "(?<=Name\":\")(.*?)(?=\")";
-                Match Name = Regex.Match(gearJson, pattern2);
-
-                string pattern3 = "(?<=data\":\")(.*?)(?=\"})";
-                Match publicName = Regex.Match(gearJson, pattern3);
-
-                string gear = Name.Value + comps.Value + publicName.Value;
-
-                if (!compsHashDict.ContainsKey(gear.GetHashString(HashHelper.HashType.MD5)))
+                if (CheckIsValidWeaponGearIDRangeData(gearIDRange))
                 {
                     return false;
                 }
@@ -53,7 +42,16 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
 
             string gear = Name.Value + comps.Value + publicName.Value;
 
-            return compsHashDict.ContainsKey(gear.GetHashString(HashHelper.HashType.MD5));
+            string MD5 = gear.GetHashString(HashHelper.HashType.MD5);
+
+            bool result = compsHashDict.ContainsKey(MD5);
+
+            if (EntryPoint.EnableDebugInfo)
+            {
+                Logs.LogMessage("GearJSON: " + gear +", MD5: " + MD5 + ", isMatch: " + result);
+            }
+
+            return result;
         }
 
         public static void LoadData()
@@ -61,14 +59,26 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             foreach (PlayerOfflineGearDataBlock block in GameDataBlockBase<PlayerOfflineGearDataBlock>.GetAllBlocksForEditor())
             {
                 string gearJson = block.GearJSON;
+
                 string pattern = "(?<=Comps\":)(.*?)(?=,\"MatTrans\")";
                 Match comps = Regex.Match(gearJson, pattern);
+
                 string pattern2 = "(?<=Name\":\")(.*?)(?=\")";
                 Match Name = Regex.Match(gearJson, pattern2);
+
                 string pattern3 = "(?<=data\":\")(.*?)(?=\"})";
                 Match publicName = Regex.Match(gearJson, pattern3);
+
                 string gear = Name.Value + comps.Value + publicName.Value;
-                compsHashDict.Add(gear.GetHashString(HashHelper.HashType.MD5), gearJson);
+
+                string MD5 = gear.GetHashString(HashHelper.HashType.MD5);
+
+                if (EntryPoint.EnableDebugInfo)
+                {
+                    Logs.LogMessage("Add GearJSON: " + gear + ", MD5:" + MD5);
+                }
+
+                compsHashDict.Add(MD5, gearJson);
             }
         }
 

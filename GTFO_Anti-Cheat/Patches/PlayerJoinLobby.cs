@@ -86,17 +86,17 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                 foreach (SNet_Player player in SNet.LobbyPlayers)
                 {
                     //不检测自身和机器人，因为没有必要
-                    if (player == SNet.LocalPlayer || player.IsBot) 
+                    if (player == SNet.LocalPlayer || player.IsBot) //不检测自身和机器人，因为没有必要
                     {
-                        continue;
+                        return;
                     }
 
-                    if (!BoosterDataManager.CheckBoostersForPlayer(player))
+                    if (EntryPoint.DetectBoosterHack && !BoosterDataManager.CheckBoostersForPlayer(player))
                     {
                         LobbyManager.KickorBanPlayer(player, EntryPoint.Language.BOOSTER_HACK);
                     }
 
-                    if (!WeaponDataManager.CheckIsValidWeaponGearIDRangeDataForPlayer(player)) 
+                    if (EntryPoint.DetectWeaponDataHack && !WeaponDataManager.CheckIsValidWeaponGearIDRangeDataForPlayer(player)) 
                     {
                         LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_MODEL_HACK);
                     }

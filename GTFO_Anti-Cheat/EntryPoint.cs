@@ -27,8 +27,6 @@ namespace Hikaria.GTFO_Anti_Cheat
             EntryPoint.AutoKickPlayer = configManager.AutoKickPlayer;
             EntryPoint.EnableOnlinePlayerLists = configManager.LoadOnlinePlayerLists;
 
-            
-            EntryPoint.DetectWeaponModelHack = configManager.DetectWeaponModelHack;
             EntryPoint.DetectBoosterHack = configManager.DetectBoosterHack;
             EntryPoint.DetectWeaponDataHack = configManager.DetectWeaponDataHack;
 
@@ -70,7 +68,7 @@ namespace Hikaria.GTFO_Anti_Cheat
 
         internal static bool DisableEnvironmentDetect;
 
-        internal static bool EnableDebugInfo = true;
+        internal static bool EnableDebugInfo;
 
         internal static bool IsLogged;
 
@@ -79,8 +77,6 @@ namespace Hikaria.GTFO_Anti_Cheat
         internal static bool EnableBroadcast;
 
         internal static bool IsEnglish;
-
-        internal static bool DetectWeaponModelHack;
 
         internal static bool DetectWeaponDataHack;
 

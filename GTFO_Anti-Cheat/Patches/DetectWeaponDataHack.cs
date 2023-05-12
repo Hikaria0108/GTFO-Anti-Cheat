@@ -2,6 +2,8 @@
 using Gear;
 using Hikaria.GTFO_Anti_Cheat.Managers;
 using Hikaria.GTFO_Anti_Cheat.Utils;
+using Il2CppSystem.Collections.Generic;
+using Player;
 using SNetwork;
 
 namespace Hikaria.GTFO_Anti_Cheat.Patches
@@ -11,10 +13,10 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         public override void Execute()
         {
             base.PatchMethod<GameDataInit>("Initialize", PatchType.Postfix);
-            base.PatchMethod<SNet_GlobalManager>("OnReplicationRoleModeChange", PatchType.Postfix);
+            base.PatchMethod<PlayerBackpackManager>("ReceiveInventorySync", PatchType.Postfix);
             base.PatchMethod<Dam_EnemyDamageBase>("ReceiveBulletDamage", PatchType.Prefix);
             base.PatchMethod<Dam_EnemyDamageBase>("ReceiveMeleeDamage", PatchType.Prefix);
-            
+            base.PatchMethod<SentryGunInstance_Firing_Bullets>("FireBullet", PatchType.Both);
         }
 
         private static void GameDataInit__Initialize__Postfix()
@@ -22,24 +24,40 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             WeaponDataManager.LoadData();
         }
 
-        private static void SNet_GlobalManager__OnReplicationRoleModeChange__Postfix(SNet_Player player, eReplicationMode mode)
+        private static void PlayerBackpackManager__ReceiveInventorySync__Postfix(pInventorySync data)
         {
-            if (LobbyManager.Host && EntryPoint.DetectWeaponModelHack)
+            if (LobbyManager.Host && EntryPoint.DetectWeaponDataHack)
             {
+                SNet_Player player;
+                if (!data.sourcePlayer.TryGetPlayer(out player))
+                {
+                    return;
+                }
+
+                int playerSlotIndex = player.PlayerSlotIndex();
+
+                if (playerSlotIndex == -1)
+                {
+                    return;
+                }
+
                 if (player == SNet.LocalPlayer || player.IsBot) //不检测自身和机器人，因为没有必要)
                 {
                     return;
                 }
 
-                if (mode == eReplicationMode.ReadyToStartPlaying) //当玩家准备好开始游戏时再检测，降低资源消耗
+                List<GearIDRange> gears = new List<GearIDRange>();
+                gears.Add(new GearIDRange(data.gearStandard));
+                gears.Add(new GearIDRange(data.gearSpecial));
+                gears.Add(new GearIDRange(data.gearMelee));
+                gears.Add(new GearIDRange(data.gearClass));
+                
+                foreach (GearIDRange gearIDRange in gears)
                 {
-                    foreach (GearIDRange gearIDRange in GearManager.Current.m_gearPerSlot[player.PlayerSlotIndex()])
+                    bool flag = WeaponDataManager.CheckIsValidWeaponGearIDRangeData(gearIDRange);
+                    if (!flag)
                     {
-                        bool flag = WeaponDataManager.CheckIsValidWeaponGearIDRangeData(gearIDRange);
-                        if (!flag)
-                        {
-                            LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_MODEL_HACK);
-                        }
+                        LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_DATA_HACK);
                     }
                 }
             }
@@ -49,14 +67,24 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         {
             if (LobbyManager.Host && EntryPoint.DetectWeaponDataHack)
             {
+                if (InSentryGunFiringPendding) //排除SentryGun
+                {
+                    return;
+                }
+
+                IReplicator replicator;
+                data.source.pRep.TryGetID(out replicator);
+                SNet_Player player = replicator.OwningPlayer;
+
+                if (player == SNet.LocalPlayer || player.IsBot) //不检测自身和机器人，因为没有必要
+                {
+                    return;
+                }
+
                 bool flag = WeaponDamageManager.CheckIsValidBulletWeaponDamage(__instance, data);
                 if (!flag)
                 {
-                    IReplicator replicator;
-                    data.source.pRep.TryGetID(out replicator);
-                    SNet_Player player = replicator.OwningPlayer;
-
-                    LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_DAMAGE_HACK);
+                    LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_DATA_HACK);
                 }
             }
         }
@@ -64,18 +92,37 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         {
             if (LobbyManager.Host && EntryPoint.DetectWeaponDataHack)
             {
+                IReplicator replicator;
+                data.source.pRep.TryGetID(out replicator);
+                SNet_Player player = replicator.OwningPlayer;
+
+                if (player == SNet.LocalPlayer || player.IsBot) //不检测自身和机器人，因为没有必要
+                {
+                    return;
+                }
+
                 bool flag = WeaponDamageManager.CheckIsValidMeleeDamage(__instance, data);
 
                 if (!flag)
                 {
-                    IReplicator replicator;
-                    data.source.pRep.TryGetID(out replicator);
-                    SNet_Player player = replicator.OwningPlayer;
-
-                    LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_DAMAGE_HACK);
+                    LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_DATA_HACK);
                 }
+
             }
         }
+
+        private static void SentryGunInstance_Firing_Bullets__FireBullet__Prefix()
+        {
+            InSentryGunFiringPendding = true;
+        }
+
+        private static void SentryGunInstance_Firing_Bullets__FireBullet__Postix()
+        {
+            InSentryGunFiringPendding = false;
+        }
+
+
+        private static bool InSentryGunFiringPendding;
 
 
 

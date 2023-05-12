@@ -6,7 +6,7 @@
         {
             get
             {
-                return "<#F80>[GTFO_Anti-Cheat] <#F00>Unknown Command, enter /gac help to list all commands";
+                return "<color=orange>[GTFO_Anti-Cheat]</color> <#F00>Unknown Command, enter /gac help to list all commands";
             }
         }
 
@@ -14,7 +14,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] Checking for updates...";
+                return "<color=orange>[GTFO Anti-Cheat]</color> Checking for updates...";
             }
         }
 
@@ -46,7 +46,7 @@
         {
             get
             {
-                return "<#F80>[GTFO_Anti-Cheat] <#F00>Anti-cheating will not function since you are not the host";
+                return "<color=orange>[GTFO_Anti-Cheat]</color> <#F00>Anti-cheating will not function since you are not the host";
             }
         }
 
@@ -54,7 +54,7 @@
         {
             get
             {
-                return "<#F80>[GTFO_Anti-Cheat] <#0F0>Anti-cheating will function since you are the host";
+                return "<color=orange>[GTFO_Anti-Cheat]</color> <#0F0>Anti-cheating will function since you are the host";
             }
         }
 
@@ -62,14 +62,14 @@
         {
             get
             {
-                return "<#F80>[GTFO_Anti-Cheat] <#F00>Illegal plugin(s) has been detected and anti-cheating has been disabled";
+                return "<color=orange>[GTFO_Anti-Cheat]</color> <#F00>Illegal plugin(s) has been detected and anti-cheating has been disabled";
             }
         }
         public override string ENVIRONMENT_ERROR
         {
             get
             {
-                return "<#F80>[GTFO_Anti-Cheat] <#F00>Environment anomaly detected, anti-cheat has been disabled";
+                return "<color=orange>[GTFO_Anti-Cheat]</color> <#F00>Environment anomaly detected, anti-cheat has been disabled";
             }
         }
 
@@ -109,7 +109,7 @@
         {
             get
             {
-                return "<#F00>[GTFO Anti-Cheat] Check update failure!";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <#F00>Check update failure!";
             }
         }
 
@@ -117,7 +117,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <#0F0>Currently is the latest version, build v{0}";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <#0F0>Currently is the latest version, build v{0}";
             }
         }
 
@@ -125,7 +125,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] Update detected v{0}";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <#0F0>Update detected v{0}";
             }
         }
 
@@ -133,7 +133,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] Loading online player whitelist and blacklist...";
+                return "<color=orange>[GTFO Anti-Cheat]</color> Loading online player whitelist and blacklist...";
             }
         }
 
@@ -141,7 +141,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] Online player whitelist and blacklist loaded";
+                return "<color=orange>[GTFO Anti-Cheat]</color> Online player whitelist and blacklist loaded";
             }
         }
 
@@ -173,7 +173,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] ChangeLog:";
+                return "<color=orange>[GTFO Anti-Cheat]</color> ChangeLog:";
             }
         }
 
@@ -181,7 +181,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] {0} banned player {1}[{2}] was refused to join lobby";
+                return "<color=orange>[GTFO Anti-Cheat]</color> {0} banned player {1}[{2}] was refused to join lobby";
             }
         }
 
@@ -205,7 +205,7 @@
         {
             get
             {
-                return "<#0F0>Player [{0}] has been unbanned locally";
+                return "<color=orange>[GTFO Anti-Cheat]</color> Player [{0}] is removed from local blacklist";
             }
         }
 
@@ -215,14 +215,6 @@
             {
                 return "Modified weapon model";
             } 
-        }
-
-        public override string WEAPON_DAMAGE_HACK
-        {
-            get
-            {
-                return "Modified weapon damage";
-            }
         }
 
         public override string WEAPON_DATA_HACK
@@ -253,7 +245,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>Auto kick cheaters {1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>Auto kick cheaters {1}</color>";
             }
         }
 
@@ -261,7 +253,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>Auto kick and ban cheaters {1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>Auto kick and ban cheaters {1}</color>";
             }
         }
 
@@ -269,28 +261,21 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>Detect cheaters broadcast {1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>Detect cheaters broadcast {1}</color>";
             }
         }
         public override string COMMAND_HINT_DETECT_BOOSTER_HACK
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>Booster detector {1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>Booster detector {1}</color>";
             }
         }
         public override string COMMAND_HINT_DETECT_WEAPON_DATA_HACK
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>Weapon data detector {1}</color>";
-            }
-        }
-        public override string COMMAND_HINT_DETECT_WEAPON_MODEL_HACK
-        {
-            get
-            {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>Weapon model data detector {1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>Weapon data detector {1}</color>";
             }
         }
 
@@ -298,7 +283,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] Avaliable commands:";
+                return "<color=orange>[GTFO Anti-Cheat]</color> Avaliable commands:";
             }
         }
 
@@ -306,7 +291,7 @@
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] Enter /gac help to list all commands";
+                return "<color=orange>[GTFO Anti-Cheat]</color> Enter /gac help to list all commands";
             }
         }
 
@@ -339,14 +324,6 @@
             get
             {
                 return "/gac detect booster [on|off], enable or disable booster data detection";
-            }
-        }
-
-        public override string COMMAND_DESC_DETECT_WEAPON_MODEL_HACK
-        {
-            get
-            {
-                return "/gac detect weaponmodel [on|off], enable or disable weapon model data detection";
             }
         }
 

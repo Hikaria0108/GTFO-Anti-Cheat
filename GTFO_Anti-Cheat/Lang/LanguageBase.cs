@@ -60,8 +60,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
 
         public abstract string WEAPON_MODEL_HACK { get; }
 
-        public abstract string WEAPON_DAMAGE_HACK { get; }
-
         public abstract string WEAPON_DATA_HACK { get; }
 
         public abstract string TURN_ON { get; }
@@ -73,8 +71,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         public abstract string COMMAND_HINT_AUTOBAN { get; }
 
         public abstract string COMMAND_HINT_DETECT_BOOSTER_HACK { get; }
-
-        public abstract string COMMAND_HINT_DETECT_WEAPON_MODEL_HACK { get; }
 
         public abstract string COMMAND_HINT_DETECT_WEAPON_DATA_HACK { get; }
 
@@ -89,8 +85,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         public abstract string COMMAND_DESC_BROADCAST { get; }
 
         public abstract string COMMAND_DESC_DETECT_BOOSTER_HACK { get; }
-
-        public abstract string COMMAND_DESC_DETECT_WEAPON_MODEL_HACK { get; }
 
         public abstract string COMMAND_DESC_DETECT_WEAPON_DATA_HACK { get; }
     }

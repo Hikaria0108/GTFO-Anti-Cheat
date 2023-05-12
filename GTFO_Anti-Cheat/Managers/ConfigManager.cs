@@ -24,7 +24,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             ConfigManager.loadOnlinePlayerLists = configFile.Bind<bool>(ConfigDescription.PLAYER_SETTINGS, ConfigDescription.LOAD_ONLINE_PLAYER_LISTS_NAME, true, ConfigDescription.LOAD_ONLINE_PLAYER_LISTS_DESC);
 
             ConfigManager.detectBoosterHack = configFile.Bind<bool>(ConfigDescription.DETECTOR_SETTINGS, ConfigDescription.DETECT_BOOSTER_HACK_NAME, true, ConfigDescription.DETECT_BOOSTER_HACK_DESC);
-            ConfigManager.detectWeaponModelHack = configFile.Bind<bool>(ConfigDescription.DETECTOR_SETTINGS, ConfigDescription.DETECT_WEAPON_MODEL_HACK_NAME, true, ConfigDescription.DETECT_WEAPON_MODEL_HACK_DESC);
             ConfigManager.detectWeaponDataHack = configFile.Bind<bool>(ConfigDescription.DETECTOR_SETTINGS, ConfigDescription.DETECT_WEAPON_DATA_HACK_NAME, true, ConfigDescription.DETECT_WEAPON_DATA_HACK_DESC);
 
             Logs.LogDebug("Config loaded");
@@ -43,8 +42,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
         public static readonly ConfigEntry<bool> loadOnlinePlayerLists;
 
         public static readonly ConfigEntry<bool> enableBroadcast;
-
-        public static readonly ConfigEntry<bool> detectWeaponModelHack;
 
         public static readonly ConfigEntry<bool> detectWeaponDataHack;
 
@@ -119,14 +116,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             get
             {
                 return detectWeaponDataHack.Value;
-            }
-        }
-
-        public bool DetectWeaponModelHack
-        {
-            get
-            {
-                return detectWeaponModelHack.Value;
             }
         }
     }

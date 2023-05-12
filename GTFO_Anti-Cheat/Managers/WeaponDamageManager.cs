@@ -15,7 +15,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             SNet_Player player = replicator.OwningPlayer;
             int playerSlotIndex = player.PlayerSlotIndex();
 
-            if (player == SNet.LocalPlayer || player.IsBot) //不检测自身和机器人，因为没有必要
+            if (playerSlotIndex == -1)
             {
                 return true;
             }
@@ -36,15 +36,16 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
 
             ItemEquippable item = playerAgent.Inventory.WieldedItem;
 
-            if (item.ArchetypeData == null)
+            if (item.MeleeArchetypeData == null)
             {
                 if (EntryPoint.EnableDebugInfo)
                 {
-                    Logs.LogMessage("ArchtypeData is null!");
+                    Logs.LogMessage("MeleeArchtypeData is null!");
                 }
                 return false;
             }
 
+            //算法写在这
             
 
             return true;
@@ -105,38 +106,30 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
 
             if (EntryPoint.EnableDebugInfo)
             {
-
-                Logs.LogMessage(string.Format("Data from player: damage:{0}, LimbID:{1}, precisionMulti:{2}, staggerMulti:{3}, allowDirectionBonus:{4}, distance:{5}", data.damage.Get(dam_EnemyDamageBase.HealthMax), data.limbID, data.precisionMulti.Get(10f), data.staggerMulti.Get(10f), data.allowDirectionalBonus, distance));
+                Logs.LogMessage(string.Format("Data from player: damage:{0}, LimbID:{1}, precisionMulti:{2}, staggerMulti:{3}, allowDirectionBonus:{4}, localPostion:{5}", data.damage.Get(dam_EnemyDamageBase.HealthMax), data.limbID, data.precisionMulti.Get(10f), data.staggerMulti.Get(10f), data.allowDirectionalBonus, data.localPosition.Get(10f).ToDetailedString()));
             }
 
-            Dam_EnemyDamageLimb limb = dam_EnemyDamageBase.DamageLimbs[data.limbID]; //获取击中部位
-
-            /*
-            foreach (Dam_EnemyDamageLimb _limb in dam_EnemyDamageBase.DamageLimbs)
-            {
-                if (_limb.m_limbID == data.limbID)
-                {
-                    //找到部位
-                    limb = _limb;
-                    break;
-                }
-            }
-            */
+            Dam_EnemyDamageLimb limb = dam_EnemyDamageBase.DamageLimbs[data.limbID]; //获取击中部位，LimbID是根据Index来的，会改变
 
             Vector3 playerPos = playerAgent.AimTarget.position;
             Vector3 enemyLimbPos = limb.DamageTargetPos;
-            Vector3 direction = enemyLimbPos - playerPos; //获取弹道方向，先用Aimtarget替代localPostion
+            Vector3 fireDirection = enemyLimbPos - playerPos; //获取弹道方向，先用Aimtarget替代localPostion
 
-            distance = direction.magnitude;//射击距离
+            if (EntryPoint.EnableDebugInfo)
+            {
+                Logs.LogMessage("Test FireDirection: " + fireDirection.ToDetailedString());
+            }
+
+            distance = fireDirection.magnitude;//射击距离
 
             if (EntryPoint.EnableDebugInfo)
             {
                 Logs.LogMessage("Distance: " + distance);
             }
-            
-            direction.Normalize();//射击方向归一化
 
-            float backBonusMulti = data.allowDirectionalBonus ? GetBackBonusMulti(dam_EnemyDamageBase, direction) : 1f; //获取后背加成倍率
+            fireDirection.Normalize();//射击方向归一化
+
+            float backBonusMulti = data.allowDirectionalBonus ? GetBackBonusMulti(dam_EnemyDamageBase, fireDirection) : 1f; //获取后背加成倍率
 
             float damage = data.damage.Get(dam_EnemyDamageBase.HealthMax); //接收到的伤害数据
 
@@ -153,7 +146,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             }
             else if (distance > falloff.x) //有距离衰减
             {
-                falloffMulti = 1f - distance / falloff.y; //衰减算法还有问题
+                falloffMulti = 1f - (distance - falloff.x) / (falloff.y - falloff.x); //衰减算法
             }
 
             if (EntryPoint.EnableDebugInfo)
@@ -169,7 +162,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
                 Logs.LogMessage(string.Format("damage:{0},targetDamage:{1}", damage, targetDamage));
             }
 
-            bool flag2 = Math.Abs(damage - targetDamage) <= 0.02f; //在一定误差范围内认为没问题
+            bool flag2 = Math.Abs(damage - targetDamage) / targetDamage <= 0.025f; //在一定误差范围内认为没问题，目前由于算法缺陷问题导致精度没有很高
             if (!flag2)
             {
                 //检测到改伤作弊

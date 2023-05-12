@@ -25,7 +25,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
         private static void BoosterImplantManager__OnSyncBoosterImplants__Postfix(SNet_Player player, pBoosterImplantsWithOwner pBoosterImplantsWithOwner)
         {
-            BoosterDataManager.StorePlayerBoosters(player, pBoosterImplantsWithOwner);
+            //BoosterDataManager.StorePlayerBoosters(player, pBoosterImplantsWithOwner);
 
             if (LobbyManager.Host && EntryPoint.DetectBoosterHack)
             {

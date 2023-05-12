@@ -116,10 +116,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     EntryPoint.DetectBoosterHack = enable;
                     GameEventLogManager.AddLog(string.Format(EntryPoint.Language.COMMAND_HINT_DETECT_BOOSTER_HACK, EntryPoint.DetectBoosterHack ? "green" : "red", EntryPoint.DetectBoosterHack ? EntryPoint.Language.TURN_ON : EntryPoint.Language.TURN_OFF));
                     return;
-                case "weaponmodel":
-                    EntryPoint.DetectWeaponModelHack = enable;
-                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.COMMAND_HINT_DETECT_WEAPON_MODEL_HACK, EntryPoint.DetectWeaponModelHack ? "green" : "red", EntryPoint.DetectWeaponModelHack ? EntryPoint.Language.TURN_ON : EntryPoint.Language.TURN_OFF));
-                    break;
                 case "weapondata":
                     EntryPoint.DetectWeaponDataHack = enable;
                     GameEventLogManager.AddLog(string.Format(EntryPoint.Language.COMMAND_HINT_DETECT_WEAPON_DATA_HACK, EntryPoint.DetectWeaponDataHack ? "green" : "red", EntryPoint.DetectWeaponDataHack ? EntryPoint.Language.TURN_ON : EntryPoint.Language.TURN_OFF));
@@ -152,7 +148,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             EntryPoint.Language.COMMAND_DESC_AUTO_KICK_PLAYER,
             EntryPoint.Language.COMMAND_DESC_AUTO_BAN_PLAYER,
             EntryPoint.Language.COMMAND_DESC_DETECT_BOOSTER_HACK,
-            EntryPoint.Language.COMMAND_DESC_DETECT_WEAPON_MODEL_HACK,
             EntryPoint.Language.COMMAND_DESC_DETECT_WEAPON_DATA_HACK
         };
 

@@ -15,7 +15,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
         }
 
-        public override string Name { get; } = "DetectPlayerDataHack";
+        public override string Name { get; } = "DetectPlayerBackpackDataHack";
 
         public static Patch Instance { get; private set; }
 
@@ -24,6 +24,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             DetectPlayerBackpackDataHack.Instance = this;
         }
 
-        private const string PatchName = "DetectPlayerDataHack";
+        private const string PatchName = "DetectPlayerBackpackDataHack";
     }
 }

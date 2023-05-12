@@ -145,22 +145,6 @@
             }
         }
 
-        internal static string DETECT_WEAPON_MODEL_HACK_NAME
-        {
-            get
-            {
-                return "DetectWeaponModelHack";
-            }
-        }
-
-        internal static string DETECT_WEAPON_MODEL_HACK_DESC
-        {
-            get
-            {
-                return "启用武器模型数据检测，接受的值：[true|false]";
-            }
-        }
-
         internal static string DETECT_WEAPON_DATA_HACK_DESC
         {
             get

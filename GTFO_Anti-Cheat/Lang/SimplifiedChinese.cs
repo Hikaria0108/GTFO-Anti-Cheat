@@ -8,7 +8,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <#F00>输入有误，输入/gac help 可查看所有指令";
+                return "<color=orange>[GTFO Anti-Cheat]</color> 输入有误，输入/gac help 可查看所有指令";
             }
         }
 
@@ -16,7 +16,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] 开始检查更新...";
+                return "<color=orange>[GTFO Anti-Cheat]</color> 开始检查更新...";
             }
         }
 
@@ -112,7 +112,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <#F00>检查更新失败！";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <#F00>检查更新失败！";
             }
         }
 
@@ -120,7 +120,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <#0F0>当前版本已是最新版本 v{0}";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <#0F0>当前版本已是最新版本 v{0}";
             }
         }
 
@@ -128,7 +128,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <#0F0>检测到新版本 v{0}";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <#0F0>检测到新版本 v{0}";
             }
         }
 
@@ -136,7 +136,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] 正在加载在线玩家黑白名单...";
+                return "<color=orange>[GTFO Anti-Cheat]</color> 正在加载在线玩家黑白名单...";
             }
         }
 
@@ -144,7 +144,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <#0F0>在线玩家黑白名单已加载";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <#0F0>在线玩家黑白名单已加载";
             }
         }
 
@@ -176,7 +176,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] 更新日志:";
+                return "<color=orange>[GTFO Anti-Cheat]</color> 更新日志:";
             }
         }
 
@@ -184,7 +184,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] 玩家 {1}[{2}] 因 {0} 封禁被拒绝加入大厅";
+                return "<color=orange>[GTFO Anti-Cheat]</color> 玩家 {1}[{2}] 因 {0} 封禁被拒绝加入大厅";
             }
         }
 
@@ -208,7 +208,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#0F0>已为ID为 [{0}] 的玩家解除本地封禁";
+                return "<color=orange>[GTFO Anti-Cheat]</color> 已为ID为 [{0}] 的玩家解除本地封禁";
             }
         }
 
@@ -218,14 +218,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
             {
                 return "修改武器模型";
             } 
-        }
-
-        public override string WEAPON_DAMAGE_HACK
-        {
-            get
-            {
-                return "修改武器伤害";
-            }
         }
 
         public override string WEAPON_DATA_HACK
@@ -256,7 +248,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>自动踢出作弊玩家已{1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>自动踢出作弊玩家已{1}</color>";
             }
         }
 
@@ -264,7 +256,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>自动踢出并封禁作弊玩家已{1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>自动踢出并封禁作弊玩家已{1}</color>";
             }
         }
 
@@ -272,28 +264,23 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>作弊玩家通告消息已{1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>作弊玩家通告消息已{1}</color>";
             }
         }
+
         public override string COMMAND_HINT_DETECT_BOOSTER_HACK
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>强化剂数据检测已{1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>强化剂数据检测已{1}</color>";
             }
         }
+
         public override string COMMAND_HINT_DETECT_WEAPON_DATA_HACK
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>武器数据检测已{1}</color>";
-            }
-        }
-        public override string COMMAND_HINT_DETECT_WEAPON_MODEL_HACK
-        {
-            get
-            {
-                return "<#F80>[GTFO Anti-Cheat] <color={0}>武器模型数据检测已{1}</color>";
+                return "<color=orange>[GTFO Anti-Cheat]</color> <color={0}>武器数据检测已{1}</color>";
             }
         }
 
@@ -301,7 +288,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] 可用命令如下";
+                return "<color=orange>[GTFO Anti-Cheat]</color> 可用命令如下";
             }
         }
 
@@ -309,7 +296,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] 输入 /gac help 可查看可用命令";
+                return "<color=orange>[GTFO Anti-Cheat]</color> 输入 /gac help 可查看可用命令";
             }
         }
 
@@ -342,14 +329,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
             get
             {
                 return "/gac detect booster [on|off], 开启|关闭 强化剂数据检测";
-            }
-        }
-
-        public override string COMMAND_DESC_DETECT_WEAPON_MODEL_HACK
-        {
-            get
-            {
-                return "/gac detect weaponmodel [on|off], 开启|关闭 武器模型数据检测";
             }
         }
 
