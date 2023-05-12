@@ -7,7 +7,7 @@ using Player;
 using SNetwork;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Linq;
-using static BoosterImplant;
+using System;
 
 namespace Hikaria.GTFO_Anti_Cheat.Managers
 {
@@ -87,6 +87,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
 
             List<pBoosterImplantData> BoosterImplantDatas = new List<pBoosterImplantData>();
 
+            //排除没有强化剂的槽位
             if (boosterImplantsWithOwner.BasicImplant.BoosterEffectCount != 0) 
             {
                 BoosterImplantDatas.Add(boosterImplantsWithOwner.BasicImplant);
@@ -192,6 +193,29 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
                 isValidSpecializedBooster = IsValidBooster(BoosterImplantCategory.Aggressive, boosterImplantsWithOwner.SpecializedImplant.Conditions, boosterImplantsWithOwner.SpecializedImplant.BoosterEffectDatas);
 
             return isValidBasicBooster && isValidAdvancedBooster && isValidSpecializedBooster;
+        }
+
+        public static bool CheckBoostersForPlayer(SNet_Player player)
+        {
+            pBoosterImplantData boosterImplantData;
+
+            for (int i = 0; i < 2; i++)
+            {
+                BoosterImplantCategory category = (BoosterImplantCategory)i;
+                if (BoosterImplantManager.TryGetBoosterImplant(player, category, out boosterImplantData))
+                {
+                    //Count为0表示对应槽位没有激活的强化剂
+                    if (boosterImplantData.BoosterEffectCount != 0)
+                    {
+                        if (!IsValidBooster(category, boosterImplantData.Conditions, boosterImplantData.BoosterEffectDatas))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
         }
 
         public static bool IsValidBooster(BoosterImplantCategory category, uint[] conditions, pBoosterEffectData[] effectDatas)
@@ -474,6 +498,8 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             {
             retry:
                 BoosterImplantTemplateDataBlock blk = JsonConvert.DeserializeObject<BoosterImplantTemplateDataBlock>(block);
+
+                //增加偏移值避免键值冲突
                 blk.persistentID += offset;
                 blk.name += "_OLD_" + offset.ToString();
 
@@ -502,8 +528,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             public List<List<Booster_Effect>> RandomEffectsGroups;
         }
 
-
-
         public struct Booster_Effect
         {
             public uint id;
@@ -517,6 +541,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
 
         private static string[] OldValidBoosterTemplatesDataBlocks =
         {
+            //OldBoosterTemplateDataBlocks
             //Rundown-005
             "{\"Deprecated\":false,\"PublicName\":\"PROVISION\",\"Description\":\"\",\"DurationRange\":{\"x\":1.0,\"y\":1.0},\"DropWeight\":2.0,\"Conditions\":[],\"RandomConditions\":[],\"Effects\":[{\"BoosterImplantEffect\":8,\"MinValue\":1.1,\"MaxValue\":1.13}],\"RandomEffects\":[[{\"BoosterImplantEffect\":7,\"MinValue\":1.1,\"MaxValue\":1.15},{\"BoosterImplantEffect\":50,\"MinValue\":1.1,\"MaxValue\":1.15}]],\"ImplantCategory\":0,\"MainEffectType\":2,\"name\":\"Muted_HealthSupport_Revive\",\"internalEnabled\":true,\"persistentID\":1}",
             "{\"Deprecated\":false,\"PublicName\":\"DETOX\",\"Description\":\"\",\"DurationRange\":{\"x\":1.0,\"y\":1.0},\"DropWeight\":1.0,\"Conditions\":[],\"RandomConditions\":[],\"Effects\":[{\"BoosterImplantEffect\":12,\"MinValue\":1.15,\"MaxValue\":1.25}],\"RandomEffects\":[],\"ImplantCategory\":0,\"MainEffectType\":2,\"name\":\"Muted_HealthSupport_InfectionRes\",\"internalEnabled\":true,\"persistentID\":22}",

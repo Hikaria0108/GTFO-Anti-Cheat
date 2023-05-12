@@ -33,21 +33,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
                 if (!flag)
                 {
-                    if (EntryPoint.EnableDebugInfo)
-                    {
-                        Logs.LogMessage(string.Format("{0} has invalid boosters", player.NickName));
-                    }
-
-                    ChatManager.DetectBroadcast(player.NickName, EntryPoint.Language.BOOSTER_HACK);
-
-                    if (EntryPoint.AutoBanPlayer)
-                    {
-                        LobbyManager.Current.BanPlayer(player.PlayerSlotIndex(), EntryPoint.Language.BOOSTER_HACK);
-                    }
-                    else if (EntryPoint.AutoKickPlayer)
-                    {
-                        LobbyManager.Current.KickPlayer(player.PlayerSlotIndex(), EntryPoint.Language.BOOSTER_HACK);
-                    }
+                    LobbyManager.KickorBanPlayer(player, EntryPoint.Language.BOOSTER_HACK);
                 }
             }
         }

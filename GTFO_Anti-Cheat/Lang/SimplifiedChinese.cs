@@ -4,11 +4,11 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
 {
     internal class SimplifiedChinese : LanguageBase
     {
-        public override string COMMAND_LIST
+        public override string COMMAND_UNKNOWN_HELP
         {
             get
             {
-                return "<#F80>[GTFO Anti-Cheat] /gac help 可查看所有指令";
+                return "<#F80>[GTFO Anti-Cheat] <#F00>输入有误，输入/gac help 可查看所有指令";
             }
         }
 
@@ -233,6 +233,131 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
             get
             {
                 return "修改武器数据";
+            }
+        }
+
+        public override string TURN_ON
+        {
+            get
+            {
+                return "启用";
+            }
+        }
+
+        public override string TURN_OFF
+        {
+            get
+            {
+                return "禁用";
+            }
+        }
+
+        public override string COMMAND_HINT_AUTOKICK
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>自动踢出作弊玩家已{1}</color>";
+            }
+        }
+
+        public override string COMMAND_HINT_AUTOBAN
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>自动踢出并封禁作弊玩家已{1}</color>";
+            }
+        }
+
+        public override string COMMAND_HINT_BROADCAST
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>作弊玩家通告消息已{1}</color>";
+            }
+        }
+        public override string COMMAND_HINT_DETECT_BOOSTER_HACK
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>强化剂数据检测已{1}</color>";
+            }
+        }
+        public override string COMMAND_HINT_DETECT_WEAPON_DATA_HACK
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>武器数据检测已{1}</color>";
+            }
+        }
+        public override string COMMAND_HINT_DETECT_WEAPON_MODEL_HACK
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>武器模型数据检测已{1}</color>";
+            }
+        }
+
+        public override string COMMAND_LIST
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] 可用命令如下";
+            }
+        }
+
+        public override string COMMAND_HELP
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] 输入 /gac help 可查看可用命令";
+            }
+        }
+
+        public override string COMMAND_DESC_AUTO_BAN_PLAYER
+        {
+            get
+            {
+                return "/gac autoban [on|off], 开启|关闭 自动踢出并封禁作弊玩家";
+            }
+        }
+
+        public override string COMMAND_DESC_AUTO_KICK_PLAYER
+        {
+            get
+            {
+                return "/gac autokick [on|off], 开启|关闭 自动踢出作弊玩家";
+            }
+        }
+
+        public override string COMMAND_DESC_BROADCAST
+        {
+            get
+            {
+                return "/gac broadcast [on|off], 开启|关闭 作弊玩家信息通报";
+            }
+        }
+
+        public override string COMMAND_DESC_DETECT_BOOSTER_HACK
+        {
+            get
+            {
+                return "/gac detect booster [on|off], 开启|关闭 强化剂数据检测";
+            }
+        }
+
+        public override string COMMAND_DESC_DETECT_WEAPON_MODEL_HACK
+        {
+            get
+            {
+                return "/gac detect weaponmodel [on|off], 开启|关闭 武器模型数据检测";
+            }
+        }
+
+        public override string COMMAND_DESC_DETECT_WEAPON_DATA_HACK
+        {
+            get
+            {
+                return "/gac detect weapondata [on|off], 开启|关闭 武器数据检测";
             }
         }
     }

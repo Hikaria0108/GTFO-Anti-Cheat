@@ -22,7 +22,10 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         public override void Execute()
         {
             base.PatchMethod<GS_Lobby>("OnPlayerEvent", PatchType.Both);
-            base.PatchMethod<SNet_Lobby_STEAM>("PlayerJoined", new Type[] { typeof(SNet_Player), typeof(CSteamID) }, PatchType.Prefix);
+            base.PatchMethod<SNet_Lobby_STEAM>("PlayerJoined", new Type[] {
+                typeof(SNet_Player),
+                typeof(CSteamID) 
+            }, PatchType.Prefix);
             base.PatchMethod(typeof(SteamMatchmaking), "InviteUserToLobby", PatchType.Prefix);
             base.PatchMethod<GS_Lobby>("OnMasterChanged", PatchType.Postfix);
         }
@@ -37,7 +40,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     {
                         EntryPoint.IsLogged = true;
                         HttpHelper.CheckUpdate();
-                        GameEventLogManager.AddLog(EntryPoint.Language.COMMAND_LIST);
+                        GameEventLogManager.AddLog(EntryPoint.Language.COMMAND_HELP);
                     }
 
                     if (!SNet.IsMaster)
@@ -57,18 +60,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
                 if (SNet.IsMaster)
                 {
-                    string threadName = "BROARDCAST";
-                    if (!alerts.ContainsKey(threadName))
-                    {
-                        CreateThread(EntryPoint.Language.ANTI_CHEAT_BROADCAST, threadName, true);
-                        return;
-                    }
-                    if (alerts[threadName].IsAlive)
-                    {
-                        alertsInstance[threadName].add();
-                        return;
-                    }
-                    CreateThread(EntryPoint.Language.ANTI_CHEAT_BROADCAST, threadName, false);
+                    AutoCreateThread(EntryPoint.Language.ANTI_CHEAT_BROADCAST, "BROADCAST_ANTI-CHEAT");
                 }
             }
         }
@@ -88,18 +80,27 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         {
             if (SNet.IsMaster)
             {
-                string threadName = "BROARDCAST";
-                if (!alerts.ContainsKey(threadName))
+                AutoCreateThread(EntryPoint.Language.ANTI_CHEAT_BROADCAST, "BROADCAST_ANTI-CHEAT");
+
+                //进行数据检测
+                foreach (SNet_Player player in SNet.LobbyPlayers)
                 {
-                    CreateThread(EntryPoint.Language.ANTI_CHEAT_BROADCAST, threadName, true);
-                    return;
+                    //不检测自身和机器人，因为没有必要
+                    if (player == SNet.LocalPlayer || player.IsBot) 
+                    {
+                        continue;
+                    }
+
+                    if (!BoosterDataManager.CheckBoostersForPlayer(player))
+                    {
+                        LobbyManager.KickorBanPlayer(player, EntryPoint.Language.BOOSTER_HACK);
+                    }
+
+                    if (!WeaponDataManager.CheckIsValidWeaponGearIDRangeDataForPlayer(player)) 
+                    {
+                        LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_MODEL_HACK);
+                    }
                 }
-                if (alerts[threadName].IsAlive)
-                {
-                    alertsInstance[threadName].add();
-                    return;
-                }
-                CreateThread(EntryPoint.Language.ANTI_CHEAT_BROADCAST, threadName, false);
             }
         }
 
@@ -110,28 +111,27 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                 return true;
             }
 
-            //若启用在线名单则优先匹配在线名单
-            if (EntryPoint.EnableOnlinePlayerLists)
-            {
-                CSteamID steamID = new CSteamID(player.Profile.player.lookup);
-                bool result1 = LobbyManager.Current.IsOnlineWhitelistPlayer(steamID) || !LobbyManager.Current.IsOnlineBlacklistPlayer(steamID);
-                if (!result1)
-                {
-                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY, EntryPoint.Language.ONLINE_BANNED, player.NickName, player.Profile.player.lookup));
-                    return result1;
-                }
-            }
-
-            //匹配本地名单
-            bool result2 = LobbyManager.Current.IsWhitelistPlayer(player) || !LobbyManager.Current.IsPlayerBanned(player);
-            if (!result2)
-                GameEventLogManager.AddLog(string.Format(EntryPoint.Language.BANNED_PLAYER_WAS_REFUSED_TO_JOIN_LOBBY, EntryPoint.Language.LOCAL_BANNED, player.NickName, player.Profile.player.lookup));
-            return result2;
+            return LobbyManager.CanPlayerJoinLobby(player);
         }
 
         private static void SteamMatchmaking__InviteUserToLobby__Prefix(CSteamID steamIDInvitee)
         {
             LobbyManager.Current.WhitelistPlayer(steamIDInvitee);
+        }
+
+        private static void AutoCreateThread(string msg, string threadName)
+        {
+            if (!alerts.ContainsKey(threadName))
+            {
+                CreateThread(msg, threadName, true);
+                return;
+            }
+            if (alerts[threadName].IsAlive)
+            {
+                alertsInstance[threadName].add();
+                return;
+            }
+            CreateThread(msg, threadName, false);
         }
 
         private static void CreateThread(string msg, string threadName, bool add)
@@ -162,7 +162,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         {
             public void add()
             {
-                this._sec = 10;
+                this._sec = 15;
             }
 
             public void Start()
@@ -189,7 +189,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
             private string _msg;
 
-            private int _sec = 10;
+            private int _sec = 15;
         }
     }
 }

@@ -4,7 +4,9 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
 {
     public abstract class LanguageBase
     {
-        public abstract string COMMAND_LIST { get; }
+        public abstract string COMMAND_UNKNOWN_HELP { get; }
+
+        public abstract string COMMAND_HELP { get; }
 
         public abstract string CHECKING_UPDATE { get; }
 
@@ -61,5 +63,35 @@ namespace Hikaria.GTFO_Anti_Cheat.Lang
         public abstract string WEAPON_DAMAGE_HACK { get; }
 
         public abstract string WEAPON_DATA_HACK { get; }
+
+        public abstract string TURN_ON { get; }
+
+        public abstract string TURN_OFF { get; }
+
+        public abstract string COMMAND_HINT_AUTOKICK { get; }
+
+        public abstract string COMMAND_HINT_AUTOBAN { get; }
+
+        public abstract string COMMAND_HINT_DETECT_BOOSTER_HACK { get; }
+
+        public abstract string COMMAND_HINT_DETECT_WEAPON_MODEL_HACK { get; }
+
+        public abstract string COMMAND_HINT_DETECT_WEAPON_DATA_HACK { get; }
+
+        public abstract string COMMAND_HINT_BROADCAST { get; }
+
+        public abstract string COMMAND_LIST { get; }
+
+        public abstract string COMMAND_DESC_AUTO_BAN_PLAYER { get; }
+
+        public abstract string COMMAND_DESC_AUTO_KICK_PLAYER { get; }
+
+        public abstract string COMMAND_DESC_BROADCAST { get; }
+
+        public abstract string COMMAND_DESC_DETECT_BOOSTER_HACK { get; }
+
+        public abstract string COMMAND_DESC_DETECT_WEAPON_MODEL_HACK { get; }
+
+        public abstract string COMMAND_DESC_DETECT_WEAPON_DATA_HACK { get; }
     }
 }

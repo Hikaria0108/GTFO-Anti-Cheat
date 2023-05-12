@@ -13,7 +13,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         private static void PlayerBackpackManager____Postfix(PlayerBackpack __instance)
         {
 
-
         }
 
         public override string Name { get; } = "DetectPlayerDataHack";

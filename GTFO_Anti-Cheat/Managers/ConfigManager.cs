@@ -11,6 +11,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
         static ConfigManager()
         {
             Logs.LogDebug("Loading config...");
+
             ConfigFile configFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "Hikaria.GTFO_Anti-Cheat.cfg"), true);
 
             ConfigManager.language = configFile.Bind<string>(ConfigDescription.COMMON_SETTINGS, ConfigDescription.LANGUAGE_NAME, "zh-cn", ConfigDescription.LANGUAGE_DESC);
@@ -22,9 +23,9 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             ConfigManager.autoBanPlayer = configFile.Bind<bool>(ConfigDescription.PLAYER_SETTINGS, ConfigDescription.AUTO_BAN_CHEATER_NAME, false, ConfigDescription.AUTO_BAN_CHEATER_DESC);
             ConfigManager.loadOnlinePlayerLists = configFile.Bind<bool>(ConfigDescription.PLAYER_SETTINGS, ConfigDescription.LOAD_ONLINE_PLAYER_LISTS_NAME, true, ConfigDescription.LOAD_ONLINE_PLAYER_LISTS_DESC);
 
-            ConfigManager.detectBoosterHack = configFile.Bind<bool>(ConfigDescription.DETECT_SETTINGS, ConfigDescription.DETECT_BOOSTER_HACK_NAME, true, ConfigDescription.DETECT_BOOSTER_HACK_DESC);
-            ConfigManager.detectWeaponModelHack = configFile.Bind<bool>(ConfigDescription.DETECT_SETTINGS, ConfigDescription.DETECT_WEAPON_MODEL_HACK_NAME, true, ConfigDescription.DETECT_WEAPON_MODEL_HACK_DESC);
-            ConfigManager.detectWeaponDataHack = configFile.Bind<bool>(ConfigDescription.DETECT_SETTINGS, ConfigDescription.DETECT_WEAPON_DATA_HACK_NAME, true, ConfigDescription.DETECT_WEAPON_DATA_HACK_DESC);
+            ConfigManager.detectBoosterHack = configFile.Bind<bool>(ConfigDescription.DETECTOR_SETTINGS, ConfigDescription.DETECT_BOOSTER_HACK_NAME, true, ConfigDescription.DETECT_BOOSTER_HACK_DESC);
+            ConfigManager.detectWeaponModelHack = configFile.Bind<bool>(ConfigDescription.DETECTOR_SETTINGS, ConfigDescription.DETECT_WEAPON_MODEL_HACK_NAME, true, ConfigDescription.DETECT_WEAPON_MODEL_HACK_DESC);
+            ConfigManager.detectWeaponDataHack = configFile.Bind<bool>(ConfigDescription.DETECTOR_SETTINGS, ConfigDescription.DETECT_WEAPON_DATA_HACK_NAME, true, ConfigDescription.DETECT_WEAPON_DATA_HACK_DESC);
 
             Logs.LogDebug("Config loaded");
         }

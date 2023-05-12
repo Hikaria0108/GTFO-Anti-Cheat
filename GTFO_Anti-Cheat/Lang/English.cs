@@ -2,11 +2,11 @@
 {
     internal class English : LanguageBase
     { 
-        public override string COMMAND_LIST
+        public override string COMMAND_UNKNOWN_HELP
         {
             get
             {
-                return "<#F80>[GTFO_Anti-Cheat] Enter /gac help to list all commands";
+                return "<#F80>[GTFO_Anti-Cheat] <#F00>Unknown Command, enter /gac help to list all commands";
             }
         }
 
@@ -230,6 +230,131 @@
             get
             {
                 return "Modified weapon data";
+            }
+        }
+
+        public override string TURN_ON
+        {
+            get
+            {
+                return "enabled";
+            }
+        }
+
+        public override string TURN_OFF
+        {
+            get
+            {
+                return "disabled";
+            }
+        }
+
+        public override string COMMAND_HINT_AUTOKICK
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>Auto kick cheaters {1}</color>";
+            }
+        }
+
+        public override string COMMAND_HINT_AUTOBAN
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>Auto kick and ban cheaters {1}</color>";
+            }
+        }
+
+        public override string COMMAND_HINT_BROADCAST
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>Detect cheaters broadcast {1}</color>";
+            }
+        }
+        public override string COMMAND_HINT_DETECT_BOOSTER_HACK
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>Booster detector {1}</color>";
+            }
+        }
+        public override string COMMAND_HINT_DETECT_WEAPON_DATA_HACK
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>Weapon data detector {1}</color>";
+            }
+        }
+        public override string COMMAND_HINT_DETECT_WEAPON_MODEL_HACK
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] <color={0}>Weapon model data detector {1}</color>";
+            }
+        }
+
+        public override string COMMAND_LIST
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] Avaliable commands:";
+            }
+        }
+
+        public override string COMMAND_HELP
+        {
+            get
+            {
+                return "<#F80>[GTFO Anti-Cheat] Enter /gac help to list all commands";
+            }
+        }
+
+        public override string COMMAND_DESC_AUTO_BAN_PLAYER
+        {
+            get
+            {
+                return "/gac autoban [on|off], enable or disable auto kick and ban cheaters";
+            }
+        }
+
+        public override string COMMAND_DESC_AUTO_KICK_PLAYER
+        {
+            get
+            {
+                return "/gac autokick [on|off], enable or disable auto kick cheaters";
+            }
+        }
+
+        public override string COMMAND_DESC_BROADCAST
+        {
+            get
+            {
+                return "/gac broadcast [on|off], enable or disable broadcast when cheaters detected";
+            }
+        }
+
+        public override string COMMAND_DESC_DETECT_BOOSTER_HACK
+        {
+            get
+            {
+                return "/gac detect booster [on|off], enable or disable booster data detection";
+            }
+        }
+
+        public override string COMMAND_DESC_DETECT_WEAPON_MODEL_HACK
+        {
+            get
+            {
+                return "/gac detect weaponmodel [on|off], enable or disable weapon model data detection";
+            }
+        }
+
+        public override string COMMAND_DESC_DETECT_WEAPON_DATA_HACK
+        {
+            get
+            {
+                return "/gac detect weapondata [on|off], enable or disable weapon data detection";
             }
         }
     }

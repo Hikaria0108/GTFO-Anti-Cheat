@@ -66,7 +66,7 @@
             }
         }
 
-        internal static string DETECT_SETTINGS
+        internal static string DETECTOR_SETTINGS
         {
             get
             {

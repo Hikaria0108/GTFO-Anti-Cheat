@@ -43,10 +43,10 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                                     EnableBroadcast(StringToBool(array[2]));
                                     return;
                                 case "autokick":
-                                    AutoKickAndBan("autokick", StringToBool(array[2]));
+                                    AutoKickAndBan(a, StringToBool(array[2]));
                                     return;
                                 case "autoban":
-                                    AutoKickAndBan("autoban", StringToBool(array[2]));
+                                    AutoKickAndBan(a, StringToBool(array[2]));
                                     return;
                                 case "detect":
                                     Detect(array[2].ToLower(), StringToBool(array[3]));
@@ -61,7 +61,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     catch (Exception ex)
                     {
                         Logs.LogError(ex.Message);
-                        GameEventLogManager.AddLog("<color=red>[GTFO Anti-Cheat]</color> 输入有误，输入/gac help查看帮助");
+                        GameEventLogManager.AddLog(EntryPoint.Language.COMMAND_UNKNOWN_HELP);
                     }
                     finally
                     {
@@ -96,7 +96,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
         private static void PrintCommands()
         {
-            GameEventLogManager.AddLog("<color=orange>[GTFO Anti-Cheat]</color> 可用命令如下:");
+            GameEventLogManager.AddLog(EntryPoint.Language.COMMAND_LIST);
             foreach (string s in commands)
             {
                 GameEventLogManager.AddLog(s);
@@ -106,7 +106,6 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         private static void EnableBroadcast(bool enable)
         {
             EntryPoint.EnableBroadcast = enable;
-            GameEventLogManager.AddLog(string.Format("<#F80>[GTFO Anti-Cheat] <color={0}>作弊玩家通告消息已{1}</color>", EntryPoint.EnableBroadcast ? "green" : "red", EntryPoint.EnableBroadcast ? "启用" : "禁用"));
         }
 
         private static void Detect(string choice, bool enable)
@@ -115,15 +114,15 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             {
                 case "booster":
                     EntryPoint.DetectBoosterHack = enable;
-                    GameEventLogManager.AddLog(string.Format("<#F80>[GTFO Anti-Cheat] <color={0}>强化剂数据检测已{1}</color>", EntryPoint.DetectBoosterHack ? "green" : "red", EntryPoint.DetectBoosterHack ? "启用" : "禁用"));
+                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.COMMAND_HINT_DETECT_BOOSTER_HACK, EntryPoint.DetectBoosterHack ? "green" : "red", EntryPoint.DetectBoosterHack ? EntryPoint.Language.TURN_ON : EntryPoint.Language.TURN_OFF));
                     return;
                 case "weaponmodel":
                     EntryPoint.DetectWeaponModelHack = enable;
-                    GameEventLogManager.AddLog(string.Format("<#F80>[GTFO Anti-Cheat] <color={0}>武器模型数据检测已{1}</color>", EntryPoint.DetectWeaponModelHack ? "green" : "red", EntryPoint.DetectWeaponModelHack ? "启用" : "禁用"));
+                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.COMMAND_HINT_DETECT_WEAPON_MODEL_HACK, EntryPoint.DetectWeaponModelHack ? "green" : "red", EntryPoint.DetectWeaponModelHack ? EntryPoint.Language.TURN_ON : EntryPoint.Language.TURN_OFF));
                     break;
                 case "weapondata":
                     EntryPoint.DetectWeaponDataHack = enable;
-                    GameEventLogManager.AddLog(string.Format("<#F80>[GTFO Anti-Cheat] <color={0}>武器数据检测已{1}</color>", EntryPoint.DetectWeaponDataHack ? "green" : "red", EntryPoint.DetectWeaponDataHack ? "启用" : "禁用"));
+                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.COMMAND_HINT_DETECT_WEAPON_DATA_HACK, EntryPoint.DetectWeaponDataHack ? "green" : "red", EntryPoint.DetectWeaponDataHack ? EntryPoint.Language.TURN_ON : EntryPoint.Language.TURN_OFF));
                     break;
                 default:
                     throw new Exception("Unknown Command");
@@ -136,23 +135,25 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             {
                 case "autokick":
                     EntryPoint.AutoKickPlayer = enable;
-                    GameEventLogManager.AddLog(string.Format("<#F80>[GTFO Anti-Cheat] <color={0}>自动踢出作弊玩家已{1}</color>", EntryPoint.AutoKickPlayer ? "green" : "red", EntryPoint.AutoKickPlayer ? "启用" : "禁用"));
+                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.COMMAND_HINT_AUTOKICK, EntryPoint.AutoKickPlayer ? "green" : "red", EntryPoint.AutoKickPlayer ? EntryPoint.Language.TURN_ON : EntryPoint.Language.TURN_OFF));
                     break;
                 case "autoban":
                     EntryPoint.AutoBanPlayer = enable;
-                    GameEventLogManager.AddLog(string.Format("<#F80>[GTFO Anti-Cheat] <color={0}>自动踢出并封禁作弊玩家已{1}</color>", EntryPoint.AutoBanPlayer ? "green" : "red", EntryPoint.AutoBanPlayer ? "启用" : "禁用"));
+                    GameEventLogManager.AddLog(string.Format(EntryPoint.Language.COMMAND_HINT_AUTOBAN, EntryPoint.AutoBanPlayer ? "green" : "red", EntryPoint.AutoBanPlayer ? EntryPoint.Language.TURN_ON : EntryPoint.Language.TURN_OFF));
                     break;
+                default:
+                    throw new Exception("Unknown Command");
             }
         }
 
         private static string[] commands =
         {
-            "/gac broadcast [on|off] 开启|关闭 作弊玩家信息通报",
-            "/gac autokick [on|off], 开启|关闭 自动踢出作弊玩家",
-            "/gac autoban [on|off], 开启|关闭 自动踢出并封禁作弊玩家",
-            "/gac detect booster [on|off], 开启|关闭 强化剂数据检测",
-            "/gac detect weaponmodel [on|off], 开启|关闭 武器模型数据检测",
-            "/gac detect weapondata [on|off], 开启|关闭 武器数据检测"
+            EntryPoint.Language.COMMAND_DESC_BROADCAST,
+            EntryPoint.Language.COMMAND_DESC_AUTO_KICK_PLAYER,
+            EntryPoint.Language.COMMAND_DESC_AUTO_BAN_PLAYER,
+            EntryPoint.Language.COMMAND_DESC_DETECT_BOOSTER_HACK,
+            EntryPoint.Language.COMMAND_DESC_DETECT_WEAPON_MODEL_HACK,
+            EntryPoint.Language.COMMAND_DESC_DETECT_WEAPON_DATA_HACK
         };
 
         private const string PatchName = "ChatBoxCommand";
