@@ -1,3 +1,3 @@
-00004,0.1.0
+00016,0.2.0
 1. 功能更新:| (1) 增加枪械模型数据检测| (2) 增加枪械伤害数据检测|2. 简化代码逻辑，优化代码结构|3. 改进多语言支持
 1. New Feature:| (1) Weapon model data detector.| (2) Weapon damage data detector.|2. Optimized code logic and structure.|3. Improved multilanguage support
