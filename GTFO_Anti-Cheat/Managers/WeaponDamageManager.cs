@@ -1,8 +1,12 @@
-﻿using Hikaria.GTFO_Anti_Cheat.Utils;
+﻿using Agents;
+using Gear;
+using Hikaria.GTFO_Anti_Cheat.Utils;
 using Player;
 using SNetwork;
 using System;
+using System.Collections;
 using UnityEngine;
+using static TenChambers.Backend;
 
 namespace Hikaria.GTFO_Anti_Cheat.Managers
 {
@@ -14,179 +18,201 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             data.source.pRep.TryGetID(out replicator);
             SNet_Player player = replicator.OwningPlayer;
             int playerSlotIndex = player.PlayerSlotIndex();
-
-            if (playerSlotIndex == -1)
-            {
-                return true;
-            }
-
             PlayerAgent playerAgent;
             PlayerManager.TryGetPlayerAgent(ref playerSlotIndex, out playerAgent);
 
             InventorySlot wieldSlot = playerAgent.Inventory.WieldedSlot;
 
-            if (wieldSlot != InventorySlot.GearMelee) 
+            if (wieldSlot == InventorySlot.None || wieldSlot != InventorySlot.GearMelee) 
             {
-                if (EntryPoint.EnableDebugInfo)
-                {
-                    Logs.LogMessage("MeleeDamage but not melee!");
-                }
+#if _DEBUG
+                Logs.LogMessage("MeleeDamage but not wield melee!");
+#endif
                 return false;
             }
 
-            ItemEquippable item = playerAgent.Inventory.WieldedItem;
+            ItemEquippable wieldItem = playerAgent.Inventory.WieldedItem;
 
-            if (item.MeleeArchetypeData == null)
+            if (wieldItem == null || wieldItem.MeleeArchetypeData == null)
             {
-                if (EntryPoint.EnableDebugInfo)
-                {
-                    Logs.LogMessage("MeleeArchtypeData is null!");
-                }
+#if _DEBUG
+                Logs.LogMessage("MeleeArchtypeData is null!");
+#endif
                 return false;
             }
 
-            //算法写在这
-            
+            //获取data中的真实数据
+            Vector3 direction = data.direction.Value; //子弹射击方向
+            Vector3 localPosition = data.localPosition.Get(10f); //玩家到敌人的相对位置
+            Vector3 position = localPosition + playerAgent.Position; //敌人位置
+            float damage = data.damage.Get(dam_EnemyDamageBase.HealthMax); //需要校验的伤害数值
+            float distance = data.localPosition.Get(10f).magnitude; //敌人与玩家之间的距离
+            float precisionMulti = data.precisionMulti.Get(10f); //枪械精准倍率
+            float staggerMulti = data.staggerMulti.Get(10f); //硬直倍率
+            float backstabberMulti = data.backstabberMulti.Get(10f); //背伤倍率
+            float sleeperMulti = data.sleeperMulti.Get(10f); //沉睡倍率
+            int limbID = (int)data.limbID; //命中部位ID
+
+            //获取本地数据
+            //float targetDamage = 
+
+            //float num = this.ApplyWeakspotAndArmorModifiers(dam, precisionMulti);
+            //num = this.ApplyDamageFromBehindBonus(num, position, direction, backstabberMulti);
+
 
             return true;
         }
 
         public static bool CheckIsValidBulletWeaponDamage(Dam_EnemyDamageBase dam_EnemyDamageBase, pBulletDamageData data)
         {
+#if _DEBUG
+            Logs.LogMessage("=========================");
+            Logs.LogMessage("Enter Check BulletDamage");
+#endif
+
             IReplicator replicator;
             data.source.pRep.TryGetID(out replicator);
             SNet_Player player = replicator.OwningPlayer;
             int playerSlotIndex = player.PlayerSlotIndex();
-
-            if (player == SNet.LocalPlayer || player.IsBot) //不检测自身和机器人，因为没有必要
-            {
-                return true;
-            }
-
             PlayerAgent playerAgent;
             PlayerManager.TryGetPlayerAgent(ref playerSlotIndex, out playerAgent);
+
             InventorySlot wieldSlot = playerAgent.Inventory.WieldedSlot;
 
-            ItemEquippable item = playerAgent.Inventory.WieldedItem;
-            
+            if (wieldSlot == InventorySlot.None || wieldSlot != InventorySlot.GearStandard && wieldSlot != InventorySlot.GearSpecial)
+            {
+#if _DEBUG
+                Logs.LogMessage("BulletDamage but not wield gun!");
+#endif
+                return false;
+            }
+
+            ItemEquippable wieldItem = playerAgent.Inventory.WieldedItem;
+
             //判断是否存在ArchtypeData，不存在说明一定是魔改枪
-            if (item.ArchetypeData == null)
+            if (wieldItem.ArchetypeData == null)
             {
-                if (EntryPoint.EnableDebugInfo)
-                {
-                    Logs.LogMessage("ArchtypeData Null!");
-                }
+#if _DEBUG
+                Logs.LogMessage("ArchtypeData is null!");
+#endif
                 return false;
             }
 
-            float precisionMulti = item.ArchetypeData.PrecisionDamageMulti; //本地枪械精准伤害倍率
+            //获取data中的真实数据
+            Vector3 direction = data.direction.Value; //子弹射击方向
+            Vector3 localPosition = data.localPosition.Get(10f); //玩家到敌人的相对位置
+            Vector3 position = localPosition + dam_EnemyDamageBase.Owner.Position; //命中位置
+            float damage = data.damage.Get(dam_EnemyDamageBase.HealthMax); //需要校验的伤害数值
+            float precisionMulti = data.precisionMulti.Get(10f); //枪械精准倍率
+            float staggerMulti = data.staggerMulti.Get(10f); //硬直倍率
+            bool allowDirectionalBonus = data.allowDirectionalBonus; //是否允许后背加成
+            int limbID = (int)data.limbID; //命中部位ID
 
-            float dataprecisionMulti = data.precisionMulti.Get(10f);
+#if _DEBUG
+            Logs.LogMessage(string.Format("Data from player: damage:{0}, LimbID:{1}, precisionMulti:{2}, staggerMulti:{3}, allowDirectionBonus:{4}, localPostion:{5}", damage, limbID, precisionMulti, staggerMulti, allowDirectionalBonus, localPosition.ToDetailedString()));
+#endif
 
-            bool flag = Math.Abs(precisionMulti - dataprecisionMulti) <= 0.01f;
+            //本地数据获取
+            float local_precisionMulti = wieldItem.ArchetypeData.PrecisionDamageMulti; //本地枪械精准伤害倍率
+            float local_staggerMulti = wieldItem.ArchetypeData.StaggerDamageMulti; //本地枪械硬直倍率
 
-            //判断精准倍率是否相同，在误差范围内认为相同
-            if (!flag)
+
+            //判断精准倍率是否相同，在误差范围内忽略
+            bool flag = Math.Abs(local_precisionMulti - precisionMulti) > 0.01f;
+
+#if _DEBUG
+            Logs.LogMessage(string.Format("precisionMulti: FromPlayer: {0}, Local: {1}, Match: {2}", precisionMulti, local_precisionMulti, !flag));
+#endif
+            if (flag)
             {
-                if (EntryPoint.EnableDebugInfo)
-                {
-                    Logs.LogMessage(string.Format("precisionMulti Not Match! fromPlayer:{0},local:{1}", dataprecisionMulti, precisionMulti));
-                }
-                return false;
+#if _DEBUG
+                Logs.LogMessage("Exit Check BulletDamage");
+                Logs.LogMessage("=========================");
+#endif
+                return CheckTolerance(!flag, playerSlotIndex);
             }
 
-            //强化剂对武器的伤害加成
-            float boosterWeaponDamageMulti = BoosterDataManager.GetBoosterDamageMultiForPlayer(wieldSlot, player);
-
-            float weaponDamage = item.ArchetypeData.Damage; //本地枪械伤害数据
-
-            Vector2 falloff = item.ArchetypeData.DamageFalloff; //本地枪械伤害距离衰减
-
-            float distance = Vector3.Distance(dam_EnemyDamageBase.DamageTargetPos, data.localPosition.Get(10f)); //暂时还不知道怎么使用localPosion
-
-            if (EntryPoint.EnableDebugInfo)
+            bool flag2 = Math.Abs(local_staggerMulti - staggerMulti) > 0.01f;
+            if (flag2)
             {
-                Logs.LogMessage(string.Format("Data from player: damage:{0}, LimbID:{1}, precisionMulti:{2}, staggerMulti:{3}, allowDirectionBonus:{4}, localPostion:{5}", data.damage.Get(dam_EnemyDamageBase.HealthMax), data.limbID, data.precisionMulti.Get(10f), data.staggerMulti.Get(10f), data.allowDirectionalBonus, data.localPosition.Get(10f).ToDetailedString()));
+#if _DEBUG
+                Logs.LogMessage(string.Format("staggerMulti: FromPlayer: {0}, Local: {1}, Match: {2}", staggerMulti, local_precisionMulti, !flag2));
+                Logs.LogMessage("Exit Check BulletDamage");
+                Logs.LogMessage("=========================");
+#endif
+                return CheckTolerance(!flag2, playerSlotIndex); ;
+
             }
 
-            Dam_EnemyDamageLimb limb = dam_EnemyDamageBase.DamageLimbs[data.limbID]; //获取击中部位，LimbID是根据Index来的，会改变
+            Vector2 falloff = wieldItem.ArchetypeData.DamageFalloff; //本地枪械伤害距离衰减
 
-            Vector3 playerPos = playerAgent.AimTarget.position;
-            Vector3 enemyLimbPos = limb.DamageTargetPos;
-            Vector3 fireDirection = enemyLimbPos - playerPos; //获取弹道方向，先用Aimtarget替代localPostion
+            Dam_EnemyDamageLimb limb = dam_EnemyDamageBase.DamageLimbs[limbID]; //获取击中部位，limbID是根据Index来的，不同部位的ID在不同敌人上会不同
 
-            if (EntryPoint.EnableDebugInfo)
-            {
-                Logs.LogMessage("Test FireDirection: " + fireDirection.ToDetailedString());
-            }
+            float distance = Vector3.Distance(position, playerAgent.Position); //计算本地距离，会因为延迟导致不精确，建议100ms以内
 
-            distance = fireDirection.magnitude;//射击距离
+#if _DEBUG
+            Logs.LogMessage(string.Format("playerAgent Pos: {0}, DamageTargetPos: {1}, HitPos: {2}", playerAgent.Position.ToDetailedString(), limb.DamageTargetPos, position.ToDetailedString()));
+#endif
 
-            if (EntryPoint.EnableDebugInfo)
-            {
-                Logs.LogMessage("Distance: " + distance);
-            }
+            //获取带Booster加成效果的伤害数值
+            float targetDamage = wieldItem.ArchetypeData.GetDamageWithBoosterEffect(playerAgent, wieldSlot);
 
-            fireDirection.Normalize();//射击方向归一化
-
-            float backBonusMulti = data.allowDirectionalBonus ? GetBackBonusMulti(dam_EnemyDamageBase, fireDirection) : 1f; //获取后背加成倍率
-
-            float damage = data.damage.Get(dam_EnemyDamageBase.HealthMax); //接收到的伤害数据
-
+            //计算距离伤害衰减
             float falloffMulti = 1f;
-
-            //超出伤害最大距离
-            if (distance >= falloff.y)
+            if (distance > falloff.x)
             {
-                if (damage != 0f)
-                {
-                    Logs.LogMessage(string.Format("over falloff but not 0 damage: {0}", damage));
-                    return false;
-                }
-            }
-            else if (distance > falloff.x) //有距离衰减
-            {
-                falloffMulti = 1f - (distance - falloff.x) / (falloff.y - falloff.x); //衰减算法
+                falloffMulti = Mathf.Max(1f - (distance - falloff.x) / (falloff.y - falloff.x), BulletWeapon.s_falloffMin);
             }
 
-            if (EntryPoint.EnableDebugInfo)
-            {
-                Logs.LogMessage("FalloffMulti: " + falloffMulti);
-            }
+#if _DEBUG
+            Logs.LogMessage(string.Format("Falloff: {0}", falloffMulti));
+#endif
 
-            float targetDamage = limb.TestDamageModifiers(weaponDamage, precisionMulti) * falloffMulti * backBonusMulti * boosterWeaponDamageMulti; //伤害计算公式
-            targetDamage = Math.Min(dam_EnemyDamageBase.HealthMax, targetDamage); //限制最大值为敌人生命值
+            targetDamage *= falloffMulti; //算上衰减倍率
+            targetDamage = limb.ApplyWeakspotAndArmorModifiers(targetDamage, local_precisionMulti); //算上特殊部位伤害倍率
+            targetDamage = limb.ApplyDamageFromBehindBonus(targetDamage, position, direction, 1f); //子弹伤害不算硬直倍率永远是1f
 
-            if (EntryPoint.EnableDebugInfo)
-            {
-                Logs.LogMessage(string.Format("damage:{0},targetDamage:{1}", damage, targetDamage));
-            }
+            bool flag3 = Math.Abs(damage - targetDamage) / targetDamage > 0.075f; //伤害差值比率在7.5%误差范围内认为没问题，误差原因是延迟无法避免
+            
+            //targetDamage = Math.Min(dam_EnemyDamageBase.HealthMax, targetDamage); //限制最大值为敌人生命值
 
-            bool flag2 = Math.Abs(damage - targetDamage) / targetDamage <= 0.025f; //在一定误差范围内认为没问题，目前由于算法缺陷问题导致精度没有很高
-            if (!flag2)
-            {
-                //检测到改伤作弊
-                return false;
-            }
-            return true;
+#if _DEBUG
+            Logs.LogMessage(string.Format("Damage: From player: {0}, LocalCalc: {1}, Match: {2}", damage, targetDamage, !flag3));
+            Logs.LogMessage("Exit Check BulletDamage");
+            Logs.LogMessage("=========================");
+#endif
+
+            return CheckTolerance(!flag3, playerSlotIndex);
         }
 
-        public static float GetBackBonusMulti(Dam_EnemyDamageBase dam_EnemyDamageBase, Vector3 direction)
+        private static int[] tolerance = new int[4] { 0, 0, 0, 0 };
+
+        private static bool CheckTolerance(bool flag, int slot)
         {
-            if(!dam_EnemyDamageBase.Owner.EnemyBalancingData.AllowDamgeBonusFromBehind) //首先判断敌人吃不吃背伤
+            if (flag)
             {
-                return 1f;
+                tolerance[slot] = 0;
+#if _DEBUG
+                Logs.LogMessage("Check tolerance: " + tolerance);
+#endif
+                return true;
+            }
+#if _DEBUG
+            Logs.LogMessage("Check tolerance: " + tolerance);
+#endif
+
+            tolerance[slot]++;
+
+            if (tolerance[slot] >= 5)
+            {
+                tolerance[slot] = 0;
+#if _DEBUG
+                Logs.LogMessage("Out of tolerance, reset!");
+#endif
+                return false;
             }
 
-            Vector3 enemyForward = dam_EnemyDamageBase.Owner.Forward; //敌人的朝向
-
-            //去除弹道方向的y轴分量
-            direction.y = 0f; 
-
-            float angle = Vector3.Angle(enemyForward, direction); //计算角度
-
-            //大于90度不吃背伤，如果有realbackbonus以后再考虑，背伤倍率是固定2倍
-            return angle > 90f ? 1f : 2f;
+            return true;
         }
     }
 }

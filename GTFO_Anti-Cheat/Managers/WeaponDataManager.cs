@@ -40,16 +40,15 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
             string pattern3 = "(?<=data\":\")(.*?)(?=\"})";
             Match publicName = Regex.Match(gearJson, pattern3);
 
-            string gear = Name.Value + comps.Value + publicName.Value;
+            string gear = comps.Value;
 
             string MD5 = gear.GetHashString(HashHelper.HashType.MD5);
 
             bool result = compsHashDict.ContainsKey(MD5);
 
-            if (EntryPoint.EnableDebugInfo)
-            {
-                Logs.LogMessage("GearJSON: " + gear +", MD5: " + MD5 + ", isMatch: " + result);
-            }
+#if _DEBUG
+            Logs.LogMessage("GearJSON: " + gear + ", MD5: " + MD5 + ", isMatch: " + result);
+#endif
 
             return result;
         }
@@ -69,15 +68,13 @@ namespace Hikaria.GTFO_Anti_Cheat.Managers
                 string pattern3 = "(?<=data\":\")(.*?)(?=\"})";
                 Match publicName = Regex.Match(gearJson, pattern3);
 
-                string gear = Name.Value + comps.Value + publicName.Value;
+                string gear = comps.Value;
 
                 string MD5 = gear.GetHashString(HashHelper.HashType.MD5);
 
-                if (EntryPoint.EnableDebugInfo)
-                {
-                    Logs.LogMessage("Add GearJSON: " + gear + ", MD5:" + MD5);
-                }
-
+#if _DEBUG
+                Logs.LogMessage("Add GearJSON: " + gear + ", MD5:" + MD5);
+#endif
                 compsHashDict.Add(MD5, gearJson);
             }
         }

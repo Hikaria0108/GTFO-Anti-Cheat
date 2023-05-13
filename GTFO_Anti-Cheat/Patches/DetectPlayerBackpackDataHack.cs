@@ -10,7 +10,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
 
         }
 
-        private static void PlayerBackpackManager____Postfix(PlayerBackpack __instance)
+        private static void PlayerBackpackManager____Postfix()
         {
 
         }

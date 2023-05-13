@@ -32,7 +32,7 @@ namespace Hikaria.GTFO_Anti_Cheat
 
             if (!EntryPoint.DisableEnvironmentDetect)
             {
-                if (DetectEnvironment())
+                if (CheckEnvironment())
                 {
                     Logs.LogError(Language.ENVIRONMENT_ERROR);
                     this.Unload();
@@ -68,8 +68,6 @@ namespace Hikaria.GTFO_Anti_Cheat
 
         internal static bool DisableEnvironmentDetect;
 
-        internal static bool EnableDebugInfo;
-
         internal static bool IsLogged;
 
         internal static bool EnableOnlinePlayerLists;
@@ -80,7 +78,7 @@ namespace Hikaria.GTFO_Anti_Cheat
 
         internal static bool DetectWeaponDataHack;
 
-        private static bool DetectEnvironment()
+        private static bool CheckEnvironment()
         {
             BepInEx.PluginInfo pluginInfo;
 

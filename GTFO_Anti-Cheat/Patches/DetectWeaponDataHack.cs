@@ -1,10 +1,13 @@
-﻿using GameData;
+﻿using Agents;
+using GameData;
 using Gear;
 using Hikaria.GTFO_Anti_Cheat.Managers;
 using Hikaria.GTFO_Anti_Cheat.Utils;
 using Il2CppSystem.Collections.Generic;
 using Player;
 using SNetwork;
+using System;
+using UnityEngine;
 
 namespace Hikaria.GTFO_Anti_Cheat.Patches
 {
@@ -15,7 +18,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             base.PatchMethod<GameDataInit>("Initialize", PatchType.Postfix);
             base.PatchMethod<PlayerBackpackManager>("ReceiveInventorySync", PatchType.Postfix);
             base.PatchMethod<Dam_EnemyDamageBase>("ReceiveBulletDamage", PatchType.Prefix);
-            base.PatchMethod<Dam_EnemyDamageBase>("ReceiveMeleeDamage", PatchType.Prefix);
+            //base.PatchMethod<Dam_EnemyDamageBase>("ReceiveMeleeDamage", PatchType.Prefix);
             base.PatchMethod<SentryGunInstance_Firing_Bullets>("FireBullet", PatchType.Both);
         }
 
@@ -57,7 +60,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                     bool flag = WeaponDataManager.CheckIsValidWeaponGearIDRangeData(gearIDRange);
                     if (!flag)
                     {
-                        LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_DATA_HACK);
+                        LobbyManager.KickorBanPlayer(player, EntryPoint.Language.WEAPON_MODEL_HACK);
                     }
                 }
             }
@@ -88,6 +91,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
                 }
             }
         }
+
         private static void Dam_EnemyDamageBase__ReceiveMeleeDamage__Prefix(Dam_EnemyDamageBase __instance, pFullDamageData data)
         {
             if (LobbyManager.Host && EntryPoint.DetectWeaponDataHack)
@@ -121,10 +125,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
             InSentryGunFiringPendding = false;
         }
 
-
         private static bool InSentryGunFiringPendding;
-
-
 
         public override string Name { get; } = "DetectWeaponDataHack";
 

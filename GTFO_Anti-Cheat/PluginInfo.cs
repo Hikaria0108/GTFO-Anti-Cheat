@@ -10,8 +10,8 @@
 
         public const string AUTHOR = "ゼロツー";
 
-        public const string BRANCH = "debug";
+        public const string BRANCH = "beta";
 
-        public const string INTERNAL_VERSION = "000014";
+        public const string INTERNAL_VERSION = "000017";
     }
 }

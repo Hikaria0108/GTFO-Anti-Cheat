@@ -106,6 +106,7 @@ namespace Hikaria.GTFO_Anti_Cheat.Patches
         private static void EnableBroadcast(bool enable)
         {
             EntryPoint.EnableBroadcast = enable;
+            GameEventLogManager.AddLog (string.Format(EntryPoint.Language.COMMAND_HINT_BROADCAST, EntryPoint.EnableBroadcast ? "green" : "red", EntryPoint.EnableBroadcast ? EntryPoint.Language.TURN_ON : EntryPoint.Language.TURN_OFF));
         }
 
         private static void Detect(string choice, bool enable)

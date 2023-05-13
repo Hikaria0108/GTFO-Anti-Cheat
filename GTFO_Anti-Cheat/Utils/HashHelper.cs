@@ -20,12 +20,12 @@ namespace Hikaria.GTFO_Anti_Cheat.Utils
 
         public static string HashFile(string fileName, HashType hashType)
         {
-            if (!System.IO.File.Exists(fileName))
+            if (!File.Exists(fileName))
             {
                 return string.Empty;
             }
 
-            FileStream fs = new FileStream(fileName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             byte[] hashBytes = HashData(fs, hashType);
             fs.Close();
             return ByteArrayToHexString(hashBytes);
